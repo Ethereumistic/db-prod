@@ -1,5 +1,11 @@
-import { ComponentExample } from "@/components/component-example";
+import { Services } from "@/components/sections/services";
+import { Hero } from "@/components/sections/hero";
 
-export default function Page() {
-return <ComponentExample />;
+export default function Home() {
+    return (
+        <>
+            <Hero />
+            <Services />
+        </>
+    );
 }
