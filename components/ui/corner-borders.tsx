@@ -4,13 +4,17 @@ interface CornerBordersProps {
     isActive?: boolean;
     className?: string;
     cornerClassName?: string;
+    groupName?: string;
 }
 
 export function CornerBorders({
     isActive,
     className,
-    cornerClassName
+    cornerClassName,
+    groupName = "nav"
 }: CornerBordersProps) {
+    const groupHoverClass = `group-hover/${groupName}`;
+
     return (
         <>
             <span className={cn(
@@ -18,7 +22,12 @@ export function CornerBorders({
                 "border-white", // Default to white as per user's last edit
                 isActive
                     ? "opacity-100 scale-110"
-                    : "opacity-0 -translate-x-2 -translate-y-2 group-hover/nav:opacity-100 group-hover/nav:translate-x-0 group-hover/nav:translate-y-0",
+                    : cn(
+                        "opacity-0 -translate-x-2 -translate-y-2",
+                        groupName === "nav" ? "group-hover/nav:opacity-100 group-hover/nav:translate-x-0 group-hover/nav:translate-y-0" :
+                            groupName === "partner" ? "group-hover/partner:opacity-100 group-hover/partner:translate-x-0 group-hover/partner:translate-y-0" :
+                                "group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
+                    ),
                 cornerClassName
             )} />
             <span className={cn(
@@ -26,7 +35,12 @@ export function CornerBorders({
                 "border-white",
                 isActive
                     ? "opacity-100 scale-110"
-                    : "opacity-0 translate-x-2 translate-y-2 group-hover/nav:opacity-100 group-hover/nav:translate-x-0 group-hover/nav:translate-y-0",
+                    : cn(
+                        "opacity-0 translate-x-2 translate-y-2",
+                        groupName === "nav" ? "group-hover/nav:opacity-100 group-hover/nav:translate-x-0 group-hover/nav:translate-y-0" :
+                            groupName === "partner" ? "group-hover/partner:opacity-100 group-hover/partner:translate-x-0 group-hover/partner:translate-y-0" :
+                                "group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
+                    ),
                 cornerClassName
             )} />
         </>
