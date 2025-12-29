@@ -58,20 +58,20 @@ export function Hero() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        Now accepting bookings for 2026
+                        Приемаме резервации за 2026
                     </div>
 
                     <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.9]">
-                        CRAFTING <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/80 to-white/40">DIGITAL</span> EXPERIENCES
+                        ТВОРИМ <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/80 to-white/40">ВИЗУАЛНИ</span> ИЗЖИВЯВАНИЯ
                     </h1>
 
                     <p className="text-xl md:text-2xl text-foreground/60 max-w-2xl mx-auto font-light leading-relaxed">
-                        DB Productions is a premier creative studio specializing in photography, cinematography, and digital storytelling.
+                        db PRODUCTIONS е бутиково творческо студио, специализирано във фотографията, киното и дигиталното разказване на истории.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <Button size="lg" className="bg-white text-black hover:bg-white/90 px-8 py-7 text-lg font-bold transition-all hover:scale-105 active:scale-95 group">
-                            Start Your Project
+                            Започни своя проект
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                         <Button
@@ -81,7 +81,7 @@ export function Hero() {
                             className="border-white/10 hover:bg-white/5 px-8 py-7 text-lg font-medium transition-all hover:scale-105 active:scale-95"
                         >
                             <Play className="mr-2 h-4 w-4 fill-white" />
-                            Watch Showreel
+                            Виж шоурийл
                         </Button>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ export function Hero() {
                     className="py-6 px-3 border border-white/10 backdrop-blur-xl hover:bg-white/20 text-white group overflow-hidden"
                 >
                     <ArrowLeft className="size-6  group-hover:-translate-x-0.5 transition-transform duration-500" />
-                    <span className="sr-only">Exit Showreel</span>
+                    <span className="sr-only">Затвори</span>
                 </Button>
             </div>
 

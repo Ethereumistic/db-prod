@@ -5,12 +5,13 @@ import { Facebook, Instagram, Youtube, Mail, Phone } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
+import { CornerBorders } from "@/components/ui/corner-borders";
 
 const footerLinks = [
-    { title: "About", href: "/about" },
-    { title: "Services", href: "/#services" },
-    { title: "Portfolio", href: "/portfolio" },
-    { title: "Contact", href: "/contact" },
+    { title: "За нас", href: "/about" },
+    { title: "Услуги", href: "/#services" },
+    { title: "Портфолио", href: "/portfolio" },
+    { title: "Контакт", href: "/contact" },
 ];
 
 const socials = [
@@ -36,7 +37,7 @@ export function Footer() {
                             <Logo size="xl" variant="logo" layout="vertical" />
                         </Link>
                         <p className="text-foreground/60 max-w-sm text-center lg:text-left text-sm font-light leading-relaxed">
-                            Premium creative studio specializing in photography, cinematography, and digital storytelling. Delivering excellence since 2018.
+                            Бутиково творческо студио, специализирано във фотографията, киното и дигиталното разказване на истории. Постигаме съвършенство от 2018 г.
                         </p>
                         <div className="flex items-center gap-4">
                             {socials.map((social) => (
@@ -58,16 +59,17 @@ export function Footer() {
                     <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-8">
                         {/* Quick Links */}
                         <div className="space-y-6 text-center md:text-left md:pl-12">
-                            <h3 className="text-white font-bold tracking-tight text-lg">Quick Links</h3>
+                            <h3 className="text-white font-bold tracking-tight text-lg">Бързи връзки</h3>
                             <nav className="flex flex-col space-y-4">
                                 {footerLinks.map((link) => (
                                     <Link
                                         key={link.title}
                                         href={link.href}
                                         onClick={(e) => handleAnchorClick(e, link.href)}
-                                        className="text-foreground/70 hover:text-foreground transition-colors text-sm"
+                                        className="text-foreground/70 hover:text-foreground transition-all duration-300 text-sm py-2 px-4 relative group/nav inline-block w-fit mx-auto md:mx-0"
                                     >
-                                        {link.title}
+                                        <CornerBorders />
+                                        <span className="relative z-10">{link.title}</span>
                                     </Link>
                                 ))}
                             </nav>
@@ -76,36 +78,45 @@ export function Footer() {
                         {/* Contact Info */}
                         <div className="space-y-8 text-center md:text-left">
                             <div className="space-y-4">
-                                <h3 className="text-white font-bold tracking-tight text-lg">Get in touch</h3>
-                                <a
-                                    href="mailto:video@dbproductions.net"
-                                    className="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors group"
-                                >
-                                    <Mail className="w-4 h-4 text-foreground/30 group-hover:text-foreground transition-colors" />
-                                    video@dbproductions.net
-                                </a>
-                            </div>
-
-                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 pt-4">
-                                <div className="space-y-2">
-                                    <p className="text-white font-medium">Даниел Ненов</p>
+                                <h3 className="text-white font-bold tracking-tight text-lg">Свържете се с нас</h3>
+                                <div className="relative group/nav inline-block p-4 mx-auto md:mx-0">
+                                    <CornerBorders />
                                     <a
-                                        href="tel:+359882664006"
-                                        className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm"
+                                        href="mailto:video@dbproductions.net"
+                                        className="relative z-10 inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors group"
                                     >
-                                        <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
-                                        +359 882 664 006
+                                        <Mail className="w-4 h-4 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                        video@dbproductions.net
                                     </a>
                                 </div>
-                                <div className="space-y-2">
-                                    <p className="text-white font-medium">Дилян Калчев</p>
-                                    <a
-                                        href="tel:+359877611162"
-                                        className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm"
-                                    >
-                                        <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
-                                        +359 877 611 162
-                                    </a>
+                            </div>
+
+                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 pt-4">
+                                <div className="space-y-2 relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
+                                    <CornerBorders />
+                                    <div className="relative z-10">
+                                        <p className="text-white font-medium whitespace-nowrap">Даниел Ненов</p>
+                                        <a
+                                            href="tel:+359882664006"
+                                            className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
+                                        >
+                                            <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                            +359 882 664 006
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="space-y-2 relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
+                                    <CornerBorders />
+                                    <div className="relative z-10">
+                                        <p className="text-white font-medium whitespace-nowrap">Дилян Калчев</p>
+                                        <a
+                                            href="tel:+359877611162"
+                                            className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
+                                        >
+                                            <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                            +359 877 611 162
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -113,9 +124,9 @@ export function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-foreground/60 text-xs tracking-widest uppercase group">
-                    <p>© {new Date().getFullYear()} DB PRODUCTIONS. ALL RIGHTS RESERVED.</p>
-                    <Link href="https://echoray.io" target="_blank" className="group"><p className="text-foreground/60">CRAFTED WITH PRECISION | <span className="text-foreground/60 transition-colors group-hover:text-foreground">ECHORAY.IO</span></p></Link>
+                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-foreground/60 text-xs tracking-widest group">
+                    <p>© {new Date().getFullYear()} db PRODUCTIONS. ВСИЧКИ ПРАВА ЗАПАЗЕНИ.</p>
+                    <Link href="https://echoray.io" target="_blank" className="group"><p className="text-foreground/60">СЪЗДАДЕНО С ПРЕЦИЗНОСТ | <span className="text-foreground/60 transition-colors group-hover:text-foreground">ECHORAY.IO</span></p></Link>
                 </div>
             </div>
         </footer>

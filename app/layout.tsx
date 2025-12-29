@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { BreakpointDisplay } from "@/lib/breakpoint-display";
 
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <Navbar />
         <main className="min-h-screen">
+          <BreakpointDisplay />
           {children}
         </main>
         <Footer />

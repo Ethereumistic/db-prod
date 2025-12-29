@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Facebook, Instagram, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CornerBorders } from "@/components/ui/corner-borders";
 
 const ASSETS_BASE_URL = "https://cdn.jsdelivr.net/gh/Ethereumistic/db-prod-assets/about/";
 
@@ -16,7 +17,7 @@ const owners = [
             { icon: Facebook, href: "https://www.facebook.com/daniel.nenov.52" },
             { icon: Instagram, href: "https://www.instagram.com/dnenov/" },
         ],
-        imageStyle: "object-cover object-top transition-transform duration-700 -mt-6 scale-110",
+        imageStyle: "object-cover object-top transition-transform duration-700 -mt-6 scale-100",
     },
     {
         name: "Дилян Калчев",
@@ -62,26 +63,33 @@ export default function AboutPage() {
                     {owners.map((owner) => (
                         <div
                             key={owner.name}
-                            className="group flex flex-col bg-white/2 border border-white/5 transition-all hover:border-white/10 overflow-hidden"
+                            className="group group/nav flex flex-col bg-white/2 border border-white/5 transition-all hover:border-white/10 overflow-hidden"
                         >
                             {/* Upper Zone: Image + Title/Badge */}
-                            <div className="relative w-full aspect-square overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                            <div className="relative w-full aspect-square overflow-hidden">
                                 <Image
                                     src={`${ASSETS_BASE_URL}${owner.image}`}
                                     alt={owner.name}
                                     fill
-                                    className={cn("object-cover object-top transition-transform duration-700", owner.imageStyle)}
+                                    className={cn(
+                                        "object-cover object-top transition-all duration-1000 grayscale group-hover:grayscale-0",
+                                        owner.imageStyle,
+                                        "group-hover:scale-105"
+                                    )}
                                 />
                                 {/* Bottom transition gradient - seamless connection to lower zone */}
                                 <div className="absolute inset-x-0 bottom-0 h-80 bg-linear-to-t from-[#0a0a0a] via-[#0a0a0a]/50 to-transparent z-10" />
 
-                                <div className="absolute bottom-6 w-full text-center z-20 space-y-1">
-                                    <h3 className="text-3xl font-black tracking-tighter text-white uppercase">
-                                        {owner.name}
-                                    </h3>
-                                    <p className="text-white/60 font-bold tracking-widest text-xs uppercase">
-                                        {owner.role}
-                                    </p>
+                                <div className="absolute bottom-8 w-full flex flex-col items-center z-20">
+                                    <div className="relative inline-flex flex-col items-center px-6 py-2">
+                                        <CornerBorders />
+                                        <h3 className="text-3xl font-black tracking-tighter text-white uppercase relative z-10 leading-tight">
+                                            {owner.name}
+                                        </h3>
+                                        <p className="text-white/80 font-bold tracking-widest text-[9px] uppercase relative z-10 px-2 py-0.5 mt-1 bg-white/5 border border-white/10 backdrop-blur-sm">
+                                            {owner.role}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
