@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { BreakpointDisplay } from "@/lib/breakpoint-display";
 
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -32,12 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black text-white selection:bg-white selection:text-black`}
       >
-        <Navbar />
-        <main className="min-h-screen">
-          <BreakpointDisplay />
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );
