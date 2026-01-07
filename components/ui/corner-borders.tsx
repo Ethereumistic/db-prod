@@ -18,7 +18,7 @@ export function CornerBorders({
     return (
         <>
             <span className={cn(
-                "absolute top-1 left-0 w-2 h-2 border-t border-l transition-all duration-500 ease-out",
+                "absolute top-0 left-0 w-2 h-2 border-t border-l transition-all duration-500 ease-out",
                 "border-white", // Default to white as per user's last edit
                 isActive
                     ? "opacity-100 scale-110"
@@ -31,7 +31,7 @@ export function CornerBorders({
                 cornerClassName
             )} />
             <span className={cn(
-                "absolute bottom-1 right-0 w-2 h-2 border-b border-r transition-all duration-500 ease-out",
+                "absolute bottom-0 right-0 w-2 h-2 border-b border-r transition-all duration-500 ease-out",
                 "border-white",
                 isActive
                     ? "opacity-100 scale-110"
