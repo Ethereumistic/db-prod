@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { CornerBorders } from "@/components/ui/corner-borders";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { urlFor } from "@/lib/sanity/image";
@@ -29,6 +29,7 @@ import {
     Wrench
 } from "lucide-react";
 import { ProjectCard } from "@/components/portfolio/project-card";
+import { ProjectGallery, GridStyle } from "@/components/portfolio/project-gallery";
 
 // Smooth height transition component for sidebar summary
 function SmoothSummarySection({
@@ -99,6 +100,77 @@ function SmoothSummarySection({
     );
 }
 
+// Vertically centered sticky sidebar component
+function CenteredStickySidebar({ children }: { children: React.ReactNode }) {
+    const sidebarRef = useRef<HTMLDivElement>(null);
+    const [stickyTop, setStickyTop] = useState(0);
+
+    useEffect(() => {
+        const calculateStickyTop = () => {
+            if (!sidebarRef.current) return;
+
+            const sidebarHeight = sidebarRef.current.offsetHeight;
+            const viewportHeight = window.innerHeight;
+
+            // ========================================
+            // NAVBAR OFFSET - Adjust this value to fine-tune
+            // the vertical positioning accounting for your navbar
+            // ========================================
+            const navbarOffset = 60; // px - tweak this value!
+
+            // ========================================
+            // ADDITIONAL TOP OFFSET - Extra breathing room
+            // above the sidebar if needed
+            // ========================================
+            const additionalTopOffset = 0; // px - tweak this value!
+
+            // Calculate center position
+            // Formula: (viewport - navbar - sidebarHeight) / 2 + navbar + additionalOffset
+            const availableSpace = viewportHeight - navbarOffset;
+            const topPosition = navbarOffset + (availableSpace - sidebarHeight) / 2 + additionalTopOffset;
+
+            // Ensure minimum top position (never go above navbar)
+            const minTop = navbarOffset + 16; // 16px minimum gap from navbar
+            const finalTop = Math.max(minTop, topPosition);
+
+            setStickyTop(finalTop);
+        };
+
+        // Initial calculation
+        calculateStickyTop();
+
+        // Recalculate on window resize
+        window.addEventListener('resize', calculateStickyTop);
+
+        // Use ResizeObserver to detect sidebar height changes
+        const resizeObserver = new ResizeObserver(() => {
+            calculateStickyTop();
+        });
+
+        if (sidebarRef.current) {
+            resizeObserver.observe(sidebarRef.current);
+        }
+
+        return () => {
+            window.removeEventListener('resize', calculateStickyTop);
+            resizeObserver.disconnect();
+        };
+    }, []);
+
+    return (
+        <motion.div
+            ref={sidebarRef}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="sticky -mt-4 transition-[top] duration-300 ease-out"
+            style={{ top: stickyTop }}
+        >
+            {children}
+        </motion.div>
+    );
+}
+
 interface ProjectDetailProps {
     project: any;
     relatedProjects?: any[];
@@ -118,7 +190,7 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
         if (!url) return null;
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
             const id = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-            return `https://www.youtube.com/embed/${id}`;
+            return `https://www.youtube.com/embed/${id}?vq=hd1080`;
         }
         if (url.includes('vimeo.com')) {
             const id = url.split('/').pop();
@@ -129,6 +201,33 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
 
     const [activeVideoIndex, setActiveVideoIndex] = useState<number>(-1); // -1 for main video
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Force scroll to top on mount
+    useLayoutEffect(() => {
+        // Handle scroll restoration
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        // Scroll to top instantly
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant' as any
+        });
+
+        // Fallback for some browsers / edge cases
+        const timeoutId = setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 0);
+
+        return () => {
+            clearTimeout(timeoutId);
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'auto';
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -170,7 +269,7 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
         : project.additionalVideos?.[activeVideoIndex]?.title || `Видео ${activeVideoIndex + 2}`;
 
     return (
-        <section ref={containerRef} className="min-h-screen bg-black pt-26 pb-24">
+        <section ref={containerRef} className="min-h-screen bg-black py-24">
             <div className="container mx-auto px-4">
                 {/* Navigation Back */}
                 <motion.div
@@ -245,9 +344,9 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                     initial={{ opacity: 0, y: 40 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    className="additional-video-container space-y-8"
+                                    className="additional-video-container  space-y-8"
                                 >
-                                    <div className="space-y-6">
+                                    <div className=" space-y-6">
                                         <h3 className="text-6xl md:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9] text-left">
                                             {vid.title || `Видео ${idx + 2}`}
                                         </h3>
@@ -294,16 +393,32 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Gallery Section */}
+                        {project.gallery?.images?.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="space-y-8 mt-24"
+                            >
+                                <div className="space-y-4">
+                                    <h3 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[0.9]">
+                                        Галерия
+                                    </h3>
+                                    <div className="w-16 h-1 bg-white/20" />
+                                </div>
+                                <ProjectGallery
+                                    images={project.gallery.images}
+                                    gridStyle={(project.gallery.gridStyle as GridStyle) || "3x2"}
+                                />
+                            </motion.div>
+                        )}
                     </div>
 
                     {/* Sidebar Info */}
-                    <div className="lg:col-span-4 lg:block relative -mt-20">
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4 }}
-                            className="sticky top-28"
-                        >
+                    <div className="lg:col-span-4 lg:block">
+                        <CenteredStickySidebar>
                             <div className="p-8 pt-16 border border-white/10 bg-white/5 backdrop-blur-xl relative space-y-10">
                                 {/* Badges in Top Right */}
                                 <div className="absolute top-6 right-6 flex items-end gap-2 pointer-events-none">
@@ -426,7 +541,7 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                     </div>
                                 )}
                             </div>
-                        </motion.div>
+                        </CenteredStickySidebar>
                     </div>
                 </div>
 

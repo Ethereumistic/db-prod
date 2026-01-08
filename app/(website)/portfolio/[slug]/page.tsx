@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     if (!project) return { title: "Project Not Found" };
 
     return {
-        title: `${project.title} | Daniel Rusev Portfolio`,
+        title: `${project.title} | db Productions Portfolio`,
         description: `Detailed view of ${project.title} - ${project.service?.title}`,
     };
 }

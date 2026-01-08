@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const breakpointDisplayVariants = cva(
-    "pointer-events-none select-none bg-foreground text-background px-2 py-1 z-50 rounded-b",
+    "pointer-events-none select-none bg-foreground text-background px-2 py-1 z-101 rounded-b",
     {
         variants: {
             position: {

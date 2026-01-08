@@ -5,6 +5,7 @@ import { Combobox as ComboboxPrimitive } from "@base-ui/react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { CornerBorders } from "@/components/ui/corner-borders"
 import {
   InputGroup,
   InputGroupAddon,
@@ -110,9 +111,12 @@ function ComboboxContent({
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"
           data-chips={!!anchor}
-          className={cn("bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ring-foreground/10 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:border-input/30 max-h-72 min-w-36 overflow-hidden rounded-none shadow-md ring-1 duration-100 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) data-[chips=true]:min-w-(--anchor-width)", className )}
+          className={cn("bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ring-foreground/10 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:border-input/30 max-h-72 overflow-hidden rounded-none shadow-md ring-1 duration-100 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none group/combobox-content relative max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) data-[chips=true]:min-w-(--anchor-width)", className)}
           {...props}
-        />
+        >
+          <CornerBorders isActive cornerClassName="w-4 h-4 " />
+          {props.children}
+        </ComboboxPrimitive.Popup>
       </ComboboxPrimitive.Positioner>
     </ComboboxPrimitive.Portal>
   )
@@ -140,16 +144,20 @@ function ComboboxItem({
     <ComboboxPrimitive.Item
       data-slot="combobox-item"
       className={cn(
-        "data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground gap-2 rounded-none py-2 pr-8 pl-2 text-xs [&_svg:not([class*='size-'])]:size-4 relative flex w-full cursor-default items-center outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "group/combobox-item relative flex w-full cursor-default items-center outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors",
+        "px-2 py-1.5 focus:bg-white/5",
         className
       )}
       {...props}
     >
-      {children}
+      <div className="relative inline-flex items-center gap-2 px-4 py-1.5 group-hover/combobox-item:text-white transition-colors">
+        <CornerBorders groupName="combobox-item" />
+        <span className="relative z-10">{children}</span>
+      </div>
       <ComboboxPrimitive.ItemIndicator
-        render={<span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />}
+        render={<span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center z-20" />}
       >
-        <CheckIcon className="pointer-events-none" />
+        <CheckIcon className="pointer-events-none size-4" />
       </ComboboxPrimitive.ItemIndicator>
     </ComboboxPrimitive.Item>
   )

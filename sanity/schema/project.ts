@@ -175,7 +175,79 @@ export const project = defineType({
             hidden: ({ document }) => (document as any)?.projectType !== 'social',
         }),
 
-        // --- 7. EXTERNAL LINKS (ALL TYPES) ---
+        // --- 7. GALLERY (BOTH TYPES) ---
+        defineField({
+            name: 'gallery',
+            title: 'Project Gallery',
+            type: 'object',
+            group: ['video', 'social'],
+            description: 'Optional image gallery to showcase additional project visuals.',
+            fields: [
+                {
+                    name: 'gridStyle',
+                    title: 'Gallery Grid Style',
+                    type: 'string',
+                    options: {
+                        list: [
+                            { title: '3×3 Grid (9 images max)', value: '3x3' },
+                            { title: '3×2 Grid (6 images max)', value: '3x2' },
+                            { title: '2×2 Grid (4 images max)', value: '2x2' },
+                            { title: '3×1 Row (3 images)', value: '3x1' },
+                            { title: '2×1 Row (2 images)', value: '2x1' },
+                        ],
+                        layout: 'radio'
+                    },
+                    initialValue: '3x2',
+                },
+                {
+                    name: 'images',
+                    title: 'Gallery Images',
+                    type: 'array',
+                    of: [{
+                        type: 'object',
+                        title: 'Image',
+                        fields: [
+                            {
+                                name: 'asset',
+                                title: 'Upload Image',
+                                type: 'image',
+                                options: { hotspot: true },
+                                description: 'Upload image directly to Sanity'
+                            },
+                            {
+                                name: 'externalUrl',
+                                title: 'Or External Image URL',
+                                type: 'url',
+                                description: 'Paste a CDN link (e.g., jsdelivr, cloudinary)'
+                            },
+                            {
+                                name: 'alt',
+                                title: 'Alt Text',
+                                type: 'string',
+                                description: 'Optional description for accessibility'
+                            }
+                        ],
+                        preview: {
+                            select: {
+                                media: 'asset',
+                                externalUrl: 'externalUrl',
+                                alt: 'alt'
+                            },
+                            prepare({ media, externalUrl, alt }) {
+                                return {
+                                    title: alt || (externalUrl ? 'External Image' : 'Gallery Image'),
+                                    media: media,
+                                    subtitle: externalUrl || undefined
+                                };
+                            }
+                        }
+                    }],
+                    description: 'Add images via Sanity upload or paste CDN links',
+                }
+            ]
+        }),
+
+        // --- 8. EXTERNAL LINKS (ALL TYPES) ---
         defineField({
             name: 'externalLinks',
             title: 'External Links',

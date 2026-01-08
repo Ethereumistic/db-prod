@@ -4,6 +4,8 @@ import { ServicesCDN } from "@/components/sections/services-cdn";
 import { Hero } from "@/components/sections/hero";
 import { Partners } from "@/components/sections/partners";
 import { Portfolio } from "@/components/sections/portfolio";
+import { About } from "@/components/sections/about";
+import { Contact } from "@/components/sections/contact";
 
 export default async function Home() {
     const [services, categories, projects] = await Promise.all([
@@ -16,8 +18,10 @@ export default async function Home() {
         <>
             <Hero />
             <ServicesCDN services={services} />
-            <Partners />
             <Portfolio projects={projects} categories={categories} services={services} />
+            <Partners />
+            <About />
+            <Contact />
         </>
     );
 }

@@ -12,6 +12,16 @@ export const service = defineType({
             validation: (Rule) => Rule.required(),
         }),
         defineField({
+            name: 'slug',
+            title: 'URL Slug',
+            type: 'slug',
+            options: {
+                source: 'title',
+                maxLength: 96,
+            },
+            validation: (Rule) => Rule.required(),
+        }),
+        defineField({
             name: 'icon',
             title: 'Lucide Icon Name',
             type: 'string',

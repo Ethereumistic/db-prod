@@ -5,6 +5,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
+import { CornerBorders } from "@/components/ui/corner-borders"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -14,8 +15,8 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+function DropdownMenuTrigger({ render, ...props }: MenuPrimitive.Trigger.Props) {
+  return <MenuPrimitive.Trigger render={render} data-slot="dropdown-menu-trigger" {...props} />
 }
 
 function DropdownMenuContent({
@@ -41,7 +42,7 @@ function DropdownMenuContent({
       >
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
-          className={cn("data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ring-foreground/10 bg-popover text-popover-foreground min-w-32 rounded-none shadow-md ring-1 duration-100 z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto outline-none data-closed:overflow-hidden", className )}
+          className={cn("data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ring-foreground/10 bg-popover text-popover-foreground rounded-none shadow-md ring-1 duration-100 z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-hidden outline-none", className)}
           {...props}
         />
       </MenuPrimitive.Positioner>
@@ -74,6 +75,7 @@ function DropdownMenuItem({
   className,
   inset,
   variant = "default",
+  children,
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
@@ -85,11 +87,17 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:text-destructive not-data-[variant=destructive]:focus:**:text-accent-foreground gap-2 rounded-none px-2 py-2 text-xs [&_svg:not([class*='size-'])]:size-4 group/dropdown-menu-item relative flex cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "group/dropdown-item relative flex cursor-default items-center outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-[inset]:pl-8 transition-colors",
+        "px-2 py-1.5 focus:bg-white/5",
         className
       )}
       {...props}
-    />
+    >
+      <div className="relative inline-flex items-center gap-2 px-4 py-1.5 group-hover/dropdown-item:text-white transition-colors">
+        <CornerBorders groupName="dropdown-item" />
+        <span className="relative z-10">{children}</span>
+      </div>
+    </MenuPrimitive.Item>
   )
 }
 

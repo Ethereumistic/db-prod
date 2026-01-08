@@ -3,6 +3,7 @@ import { groq } from 'next-sanity';
 export const servicesQuery = groq`*[_type == "service"] | order(_createdAt asc) {
     _id,
     title,
+    slug { current },
     description,
     icon,
     route,

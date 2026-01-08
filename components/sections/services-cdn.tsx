@@ -3,17 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import * as LucideIcons from "lucide-react";
-import {
-    Card,
-} from "@/components/ui/card";
-import { CornerBorders } from "@/components/ui/corner-borders";
 import { urlFor } from "@/lib/sanity/image";
 import { cn } from "@/lib/utils";
+import { CornerBorders } from "@/components/ui/corner-borders";
 
 interface ServiceData {
     _id: string;
     title: string;
+    slug?: { current: string };
     description: string;
     icon: string;
     route?: string;
@@ -28,92 +25,113 @@ interface ServicesProps {
 }
 
 export function ServicesCDN({ services }: ServicesProps) {
+    // Only show the first 2 services as requested by the user
+    const displayServices = services.slice(0, 2);
+
     return (
-        <section id="services" className="py-24 bg-black scroll-mt-20">
-            <div className="container max-w-6xl mx-auto px-4">
-                <div className="flex flex-col items-center mb-16 text-center space-y-4">
+        <section id="services" className="relative py-24 bg-black overflow-hidden -scroll-mt-3">
+            <div className="container max-w-6xl mx-auto px-6 relative z-10">
+                {/* Header - Matches Portfolio Guidelines */}
+                <div className="flex flex-col items-center mb-8 text-center space-y-4">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase"
+                        className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase"
                     >
-                        НАШИТЕ <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/80 to-white/40">УСЛУГИ</span>
+                        НАШИТЕ <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/50 to-white/20">УСЛУГИ</span>
                     </motion.h2>
                     <motion.div
                         initial={{ scaleX: 0 }}
                         whileInView={{ scaleX: 1 }}
                         transition={{ delay: 0.2 }}
                         viewport={{ once: true }}
-                        className="w-20 h-1 bg-white/10"
+                        className="w-24 h-1 bg-white/20 origin-center"
                     />
                     <motion.p
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         transition={{ delay: 0.3 }}
                         viewport={{ once: true }}
-                        className="text-white/40 max-w-xl text-lg font-light"
+                        className="text-white/40 max-w-2xl text-lg font-light"
                     >
                         Цялостни творчески решения – от първоначалната концепция до финалния резултат.
                     </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {services.map((service, index) => {
-                        const IconComponent = (LucideIcons as any)[service.icon] || LucideIcons.Scissors;
+                {/* Services Grid - Reduced Gap */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 max-w-5xl mx-auto">
+                    {displayServices.map((service, index) => {
                         const imageSrc = service.image?.asset
                             ? urlFor(service.image.asset).url()
                             : (service.image?.externalUrl || "/placeholder.jpg");
 
-                        const CardContent = (
+                        const Content = (
                             <motion.div
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
+                                transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
                                 viewport={{ once: true }}
+                                className="group cursor-pointer relative"
                             >
-                                <Card
-                                    className="relative border-white/5 hover:border-white/20 transition-all duration-700 group group/nav overflow-hidden aspect-4/5 flex flex-col justify-end h-full bg-slate-900/40 backdrop-blur-sm"
-                                >
-                                    {/* Background Image */}
-                                    <div className="absolute inset-0 z-0">
-                                        <Image
-                                            src={imageSrc}
-                                            alt={service.title}
-                                            fill
-                                            className="object-cover scale-100 group-hover:scale-110 transition-all duration-1000 ease-out opacity-60 group-hover:opacity-100"
-                                        />
-                                        <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent transition-all duration-500" />
-                                    </div>
+                                {/* Image Container with CornerBorders */}
+                                <div className="relative aspect-square mb-8 overflow-hidden border border-white/5 transition-all duration-700 group-hover:border-white/10 group-hover:bg-white/2">
+                                    <CornerBorders
+                                        groupName="service"
+                                        className="z-20"
+                                        cornerClassName="w-8 h-8 group-hover/service:border-white"
+                                    />
 
-                                    {/* Content */}
-                                    <div className="relative z-10 p-8">
-                                        <div className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 backdrop-blur-md transition-all duration-500 group-hover:bg-white group-hover:border-white mb-6">
-                                            <IconComponent className="w-6 h-6 text-white group-hover:text-black transition-colors" />
-                                        </div>
-                                        <div className="relative inline-flex items-center mb-4">
-                                            <CornerBorders />
-                                            <h3 className="text-2xl font-black text-white px-6 py-2 transition-all duration-500 relative z-10">
+                                    <Image
+                                        src={imageSrc}
+                                        alt={service.title}
+                                        fill
+                                        className={cn(
+                                            "object-contain p-8 md:p-12 transition-all duration-1000 ease-in-out",
+                                            "grayscale brightness-150 contrast-125 opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-100 group-hover:contrast-100 group-hover:scale-[1.02]"
+                                        )}
+                                        priority={index < 2}
+                                    />
+
+                                    {/* Bottom Decorative Line */}
+                                    {/* <div className="absolute bottom-0 left-0 h-px bg-white/30 w-0 group-hover:w-full transition-all duration-700 ease-in-out" /> */}
+                                </div>
+
+                                {/* Text Content */}
+                                <div className="space-y-4">
+                                    <div className="flex items-start gap-4">
+                                        <span className="text-white/10 text-3xl md:text-4xl font-black tracking-tighter pt-1 transition-colors duration-500 group-hover:text-white/30">
+                                            {index + 1}.
+                                        </span>
+                                        <div className="space-y-2">
+                                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter leading-tight transition-all duration-500">
                                                 {service.title}
                                             </h3>
+                                            <p className="text-white/40 text-sm md:text-base leading-relaxed max-w-md font-medium transition-colors duration-500 group-hover:text-white/80">
+                                                {service.description}
+                                            </p>
                                         </div>
-                                        <p className="text-white/50 group-hover:text-white/80 transition-colors duration-500 text-sm leading-relaxed line-clamp-3 font-medium">
-                                            {service.description}
-                                        </p>
                                     </div>
-                                </Card>
+
+                                    {/* Link Indicator */}
+                                    <div className="flex items-center gap-2 text-white/20 group-hover:text-white transition-colors duration-500 overflow-hidden pl-12 md:pl-14">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">Виж проекти</span>
+                                        <div className="w-8 h-px bg-white/10 group-hover:w-16 group-hover:bg-white transition-all duration-700" />
+                                    </div>
+                                </div>
                             </motion.div>
                         );
 
-                        if (service.route) {
-                            return (
-                                <Link key={service._id} href={service.route}>
-                                    {CardContent}
-                                </Link>
-                            );
-                        }
+                        const filterSlug = service.slug?.current || (service.title.toLowerCase().includes("video") ? "video" : "social-media");
 
-                        return <div key={service._id}>{CardContent}</div>;
+                        return (
+                            <Link
+                                key={service._id}
+                                href={`/?service=${filterSlug}#portfolio`}
+                            >
+                                {Content}
+                            </Link>
+                        );
                     })}
                 </div>
             </div>

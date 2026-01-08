@@ -27,11 +27,11 @@ import { Logo } from "@/components/ui/logo";
 import { CornerBorders } from "@/components/ui/corner-borders";
 
 const navItems = [
-    { title: "Начало", href: "/" },
-    { title: "За нас", href: "/about" },
+    // { title: "Начало", href: "/" },
     { title: "Услуги", href: "/#services" },
-    { title: "Портфолио", href: "/portfolio" },
-    { title: "Контакт", href: "/contact" },
+    { title: "Портфолио", href: "/#portfolio" },
+    { title: "За нас", href: "/#about" },
+    { title: "Контакт", href: "/#contact" },
 ];
 
 export function Navbar() {
@@ -66,7 +66,7 @@ export function Navbar() {
 
     return (
         <header className={cn(
-            "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out",
+            "fixed top-0 left-0 right-0 transition-all duration-500 ease-in-out z-100",
             scrolled ? "py-2" : "py-6"
         )}>
             <div className="container mx-auto px-4">

@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { CornerBorders } from "@/components/ui/corner-borders";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ProjectCard } from "@/components/portfolio/project-card";
 import { Filter } from "lucide-react";
+import { Button } from "../ui/button";
+
+import { ChevronUp } from "lucide-react";
 
 interface PortfolioProps {
     projects: any[];
@@ -15,9 +19,50 @@ interface PortfolioProps {
     services: any[];
 }
 
-export function Portfolio({ projects, categories, services }: PortfolioProps) {
+function PortfolioContent({ projects, categories, services }: PortfolioProps) {
+    const searchParams = useSearchParams();
+    const serviceIdParam = searchParams.get("service");
+
     const [activeService, setActiveService] = useState<string | null>(null);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [visibleCount, setVisibleCount] = useState(6);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const INCREMENT = 6;
+
+    // Helper to find service by slug or ID
+    const findServiceId = (slugOrId: string | null) => {
+        if (!slugOrId) return null;
+
+        const slug = slugOrId.toLowerCase();
+
+        const service = services.find(s => {
+            return (
+                s._id === slugOrId ||
+                s.slug?.current === slug
+            );
+        });
+        return service?._id || null;
+    };
+
+    // Sync state with URL search param
+    useEffect(() => {
+        if (serviceIdParam) {
+            const targetId = findServiceId(serviceIdParam);
+            if (targetId) {
+                setActiveService(targetId);
+                setActiveCategory(null);
+
+                // Automatically scroll to portfolio when filtering via URL
+                const scrollTimeout = setTimeout(() => {
+                    const element = document.getElementById("portfolio");
+                    if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                    }
+                }, 400);
+                return () => clearTimeout(scrollTimeout);
+            }
+        }
+    }, [serviceIdParam, services]);
 
     // Filter categories based on selected service
     const filteredCategories = useMemo(() => {
@@ -34,16 +79,53 @@ export function Portfolio({ projects, categories, services }: PortfolioProps) {
         });
     }, [projects, activeService, activeCategory]);
 
+    // Visible projects
+    const visibleProjects = useMemo(() => {
+        return filteredProjects.slice(0, visibleCount);
+    }, [filteredProjects, visibleCount]);
+
     const handleServiceChange = (serviceId: string | null) => {
         setActiveService(serviceId);
-        setActiveCategory(null); // Reset category when service changes
+        setActiveCategory(null);
+        setVisibleCount(INCREMENT);
     };
 
+    const handleCategoryChange = (categoryId: string | null) => {
+        setActiveCategory(categoryId);
+        setVisibleCount(INCREMENT);
+    };
+
+    const handleShowMore = () => {
+        setVisibleCount(prev => prev + INCREMENT);
+    };
+
+    // Handle scroll to top of section
+    const scrollToPortfolio = () => {
+        const element = document.getElementById("portfolio");
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
+    // Show button when scrolled into portfolio grid
+    useEffect(() => {
+        const handleScroll = () => {
+            const portfolio = document.getElementById("portfolio");
+            if (portfolio) {
+                const rect = portfolio.getBoundingClientRect();
+                // Show if we are inside the section but have scrolled past the filters
+                setShowScrollTop(rect.top < -200 && rect.bottom > 200);
+            }
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <section id="portfolio" className="py-24 bg-black overflow-hidden scroll-mt-20 max-w-7xl mx-auto">
+        <section id="portfolio" className="relative py-24 bg-black -scroll-mt-3 max-w-7xl mx-auto">
             <div className="container mx-auto px-4">
                 {/* Header */}
-                <div className="flex flex-col items-center mb-16 text-center space-y-4">
+                <div className="flex flex-col items-center mb-4 text-center space-y-4">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -70,101 +152,152 @@ export function Portfolio({ projects, categories, services }: PortfolioProps) {
                     </motion.p>
                 </div>
 
-                {/* Filters */}
-                <div className="flex flex-col items-center gap-8 mb-16">
-                    {/* Service Tabs */}
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <button
+                {/* Simplified Filters (No longer sticky) */}
+                <div className="flex flex-col items-center gap-8 mb-10">
+                    <div className="flex items-stretch backdrop-blur-md border border-white/10 bg-white/5">
+                        <Button
+                            variant="corners"
+                            isActive={!activeService}
                             onClick={() => handleServiceChange(null)}
-                            className={cn(
-                                "relative px-6 py-2 text-sm font-bold tracking-widest uppercase transition-all duration-300",
-                                !activeService ? "text-white" : "text-white/40 hover:text-white/60"
-                            )}
+                            className="relative px-6 md:px-10 py-4  text-[10px] md:text-xs font-black tracking-[0.3em] uppercase transition-all duration-500 rounded-none h-auto"
                         >
-                            <CornerBorders isActive={!activeService} />
-                            <span className="relative z-10">Всички</span>
-                        </button>
+                            Всички
+                        </Button>
                         {services.map((service) => (
-                            <button
+                            <Button
+                                variant="corners"
                                 key={service._id}
+                                isActive={activeService === service._id}
                                 onClick={() => handleServiceChange(service._id)}
                                 className={cn(
-                                    "relative px-6 py-2 text-sm font-bold tracking-widest uppercase transition-all duration-300",
-                                    activeService === service._id ? "text-white" : "text-white/40 hover:text-white/60"
+                                    "relative px-8 md:px-12 py-4 text-[10px] md:text-xs font-black tracking-[0.3em] uppercase transition-all duration-500 rounded-none h-auto border-l border-white/10",
+
                                 )}
                             >
-                                <CornerBorders isActive={activeService === service._id} />
-                                <span className="relative z-10">{service.title}</span>
-                            </button>
+                                {service.title}
+                            </Button>
                         ))}
                     </div>
 
-                    {/* Category Tabs (Only if service is selected) */}
-                    <AnimatePresence mode="wait">
-                        {activeService && filteredCategories.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                className="flex flex-wrap justify-center gap-3"
-                            >
-                                <Badge
-                                    variant="outline"
-                                    onClick={() => setActiveCategory(null)}
-                                    className={cn(
-                                        "cursor-pointer px-4 py-1 border-white/10 text-xs transition-all",
-                                        !activeCategory ? "bg-white text-black border-white" : "text-white/60 hover:text-white hover:border-white/30"
-                                    )}
+                    {/* Category Tabs (Reserved space to prevent jumping) */}
+                    <div className="h-[40px] flex items-center justify-center w-full">
+                        <AnimatePresence mode="wait">
+                            {activeService && filteredCategories.length > 0 ? (
+                                <motion.div
+                                    key={activeService}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 5 }}
+                                    className="flex flex-wrap justify-center gap-2 md:gap-3 px-4 w-full"
                                 >
-                                    Всички категории
-                                </Badge>
-                                {filteredCategories.map((cat) => (
                                     <Badge
-                                        key={cat._id}
                                         variant="outline"
-                                        onClick={() => setActiveCategory(cat._id)}
+                                        onClick={() => handleCategoryChange(null)}
                                         className={cn(
-                                            "cursor-pointer px-4 py-1 border-white/10 text-xs transition-all",
-                                            activeCategory === cat._id ? "bg-white text-black border-white" : "text-white/60 hover:text-white hover:border-white/30"
+                                            "cursor-pointer px-4 py-1.5 border-white/10 text-[10px] font-bold uppercase tracking-widest transition-all rounded-none",
+                                            !activeCategory ? "bg-white text-black border-white" : "bg-white/5 text-white/60 hover:text-white"
                                         )}
                                     >
-                                        {cat.title}
+                                        Всички категории
                                     </Badge>
-                                ))}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                    {filteredCategories.map((cat) => (
+                                        <Badge
+                                            key={cat._id}
+                                            variant="outline"
+                                            onClick={() => handleCategoryChange(cat._id)}
+                                            className={cn(
+                                                "cursor-pointer px-4 py-1.5 border-white/10 text-[10px] font-bold uppercase tracking-widest transition-all rounded-none",
+                                                activeCategory === cat._id ? "bg-white text-black border-white" : "bg-white/5 text-white/60 hover:text-white"
+                                            )}
+                                        >
+                                            {cat.title}
+                                        </Badge>
+                                    ))}
+                                </motion.div>
+                            ) : null}
+                        </AnimatePresence>
+                    </div>
                 </div>
 
                 {/* Projects Grid */}
-                <motion.div
-                    layout
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
+                <div className="relative min-h-[400px]">
                     <AnimatePresence mode="popLayout">
-                        {filteredProjects.map((project) => (
-                            <ProjectCard
-                                key={project._id}
-                                project={project}
-                                categories={categories}
-                            />
-                        ))}
+                        <motion.div
+                            key={`${activeService}-${activeCategory}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="flex flex-wrap justify-center gap-6"
+                        >
+                            {visibleProjects.map((project) => (
+                                <div
+                                    key={project._id}
+                                    className={cn(
+                                        "w-full transition-all duration-500 md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]",
+                                        visibleProjects.length === 1 && "max-w-xl"
+                                    )}
+                                >
+                                    <ProjectCard
+                                        project={project}
+                                        categories={categories}
+                                    />
+                                </div>
+                            ))}
+                        </motion.div>
                     </AnimatePresence>
-                </motion.div>
 
-                {/* Empty State */}
-                {filteredProjects.length === 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex flex-col items-center justify-center py-20 text-center"
-                    >
-                        <Filter className="w-12 h-12 text-white/10 mb-4" />
-                        <h3 className="text-xl font-bold text-white/60">Няма открити проекти</h3>
-                        <p className="text-white/40 text-sm">Моля, изберете друга категория или услуга.</p>
-                    </motion.div>
+                    {/* Empty State */}
+                    {filteredProjects.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-20 text-center">
+                            <Filter className="w-12 h-12 text-white/10 mb-4" />
+                            <h3 className="text-xl font-bold text-white/60">Няма открити проекти</h3>
+                            <p className="text-white/40 text-sm">Моля, изберете друга категория или услуга.</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Show More Button */}
+                {visibleCount < filteredProjects.length && (
+                    <div className="flex justify-center mt-16">
+                        <Button
+                            variant="corners"
+                            onClick={handleShowMore}
+                            className="px-6 py-2 group relative font-bold tracking-widest uppercase transition-all duration-500 hover:text-white"
+                        >
+                            <span className="relative z-10">Виж още</span>
+                        </Button>
+                    </div>
                 )}
             </div>
+
+            {/* Sticky Scroll to Top Button */}
+            <AnimatePresence>
+                {showScrollTop && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        className="fixed bottom-8 right-8 z-[100]"
+                    >
+                        <button
+                            onClick={scrollToPortfolio}
+                            className="w-12 h-12 border border-white/10 bg-black/50 backdrop-blur-xl flex items-center justify-center hover:border-white/30 hover:bg-white/5 transition-all group"
+                        >
+                            <ChevronUp size={24} className="text-white/50 group-hover:text-white transition-colors" />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }
+
+export function Portfolio(props: PortfolioProps) {
+    return (
+        <Suspense fallback={<div className="min-h-[400px]" />}>
+            <PortfolioContent {...props} />
+        </Suspense>
+    );
+}
+

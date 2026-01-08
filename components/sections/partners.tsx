@@ -25,7 +25,7 @@ export function Partners() {
             <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center mb-12 text-center space-y-3">
                     <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white uppercase">
-                        МЕДИЙНИ <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/80 to-white/40">ИЗЯВИ</span>
+                        Доверие, изградено с екипи като<span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/80 to-white/40"> Вашият</span>
                     </h2>
                     <div className="w-16 h-1 bg-white/10" />
                 </div>
