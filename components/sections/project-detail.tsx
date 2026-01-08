@@ -30,6 +30,75 @@ import {
 } from "lucide-react";
 import { ProjectCard } from "@/components/portfolio/project-card";
 
+// Smooth height transition component for sidebar summary
+function SmoothSummarySection({
+    activeVideoIndex,
+    activeTitle,
+    activeSummary
+}: {
+    activeVideoIndex: number;
+    activeTitle: string;
+    activeSummary: string | null;
+}) {
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [height, setHeight] = useState<number | 'auto'>('auto');
+
+    // Measure content height whenever it changes
+    useEffect(() => {
+        if (contentRef.current) {
+            const resizeObserver = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    setHeight(entry.contentRect.height);
+                }
+            });
+            resizeObserver.observe(contentRef.current);
+            return () => resizeObserver.disconnect();
+        }
+    }, [activeVideoIndex, activeSummary]);
+
+    return (
+        <motion.div
+            className="relative overflow-hidden"
+            animate={{ height }}
+            transition={{
+                duration: 0.4,
+                ease: [0.23, 1, 0.32, 1] // Custom smooth easing
+            }}
+        >
+            <div ref={contentRef} className="space-y-8">
+                <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                        key={activeVideoIndex}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="space-y-8"
+                    >
+                        <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/30 border-b border-white/5 pb-4 pr-20">
+                            {activeTitle}
+                        </h4>
+
+                        {activeSummary && (
+                            <div className="relative group/nav p-6 bg-white/2 hover:bg-white/5 transition-all">
+                                <CornerBorders isActive={false} groupName="nav" />
+                                <div className="relative overflow-hidden">
+                                    <div className="float-left mr-4 mt-1 w-10 h-10 bg-white/5 flex items-center justify-center text-white/30 group-hover/nav:text-white transition-colors">
+                                        <Info size={18} />
+                                    </div>
+                                    <p className="text-base text-white/70 leading-relaxed font-light">
+                                        {activeSummary}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+        </motion.div>
+    );
+}
+
 interface ProjectDetailProps {
     project: any;
     relatedProjects?: any[];
@@ -37,9 +106,13 @@ interface ProjectDetailProps {
 }
 
 export function ProjectDetail({ project, relatedProjects, categories }: ProjectDetailProps) {
-    const imageSrc = project.mainImage?.asset
-        ? urlFor(project.mainImage.asset).url()
-        : (project.mainImage?.externalUrl || "/placeholder.jpg");
+    const getImageUrl = (img: any) => {
+        if (!img) return null;
+        if (img.asset) return urlFor(img.asset).url();
+        return img.externalUrl;
+    };
+
+    const imageSrc = getImageUrl(project.featuredImage) || getImageUrl(project.mainImage) || "/placeholder.jpg";
 
     const getEmbedUrl = (url: string) => {
         if (!url) return null;
@@ -196,13 +269,13 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                         )}
                                     </div>
 
-                                    {/* Video Summary Card (Visible on Mobile or under video as requested) */}
+                                    {/* Video Summary Card (Visible only on Mobile, hidden on Desktop as requested) */}
                                     {vid.summary && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 20 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
-                                            className="relative group/summ p-10 border border-white/5 bg-white/2 backdrop-blur-sm"
+                                            className="relative group/summ p-10 border border-white/5 bg-white/2 backdrop-blur-sm lg:hidden"
                                         >
                                             <CornerBorders isActive={false} groupName="summ" />
                                             <div className="flex items-start gap-6">
@@ -224,12 +297,12 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                     </div>
 
                     {/* Sidebar Info */}
-                    <div className="lg:col-span-4 lg:block relative">
+                    <div className="lg:col-span-4 lg:block relative -mt-20">
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="sticky top-32"
+                            className="sticky top-28"
                         >
                             <div className="p-8 pt-16 border border-white/10 bg-white/5 backdrop-blur-xl relative space-y-10">
                                 {/* Badges in Top Right */}
@@ -244,34 +317,12 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                     ))}
                                 </div>
 
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={activeVideoIndex}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="space-y-8"
-                                    >
-                                        <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/30 border-b border-white/5 pb-4 pr-20">
-                                            {activeTitle}
-                                        </h4>
-
-                                        {activeSummary && (
-                                            <div className="relative group/nav p-6 bg-white/2 hover:bg-white/5 transition-all">
-                                                <CornerBorders isActive={false} groupName="nav" />
-                                                <div className="relative overflow-hidden">
-                                                    <div className="float-left mr-4 mt-1 w-10 h-10 bg-white/5 flex items-center justify-center text-white/30 group-hover/nav:text-white transition-colors">
-                                                        <Info size={18} />
-                                                    </div>
-                                                    <p className="text-base text-white/70 leading-relaxed font-light">
-                                                        {activeSummary}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                </AnimatePresence>
+                                {/* Smooth Height Animated Summary Section */}
+                                <SmoothSummarySection
+                                    activeVideoIndex={activeVideoIndex}
+                                    activeTitle={activeTitle}
+                                    activeSummary={activeSummary}
+                                />
 
                                 {/* Meta Items Grid */}
                                 <div className="grid grid-cols-1 gap-4">

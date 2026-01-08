@@ -63,6 +63,10 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
         asset,
         externalUrl
     },
+    featuredImage {
+        asset,
+        externalUrl
+    },
     videoUrl,
     additionalVideos,
     skills,

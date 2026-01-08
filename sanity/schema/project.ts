@@ -96,9 +96,10 @@ export const project = defineType({
         // --- 4. MEDIA ---
         defineField({
             name: 'mainImage',
-            title: 'Main Project Image',
+            title: 'Main Project Image / Thumbnail',
             type: 'object',
-            group: 'main',
+            group: ['main', 'video', 'social'],
+            description: 'Used for the portfolio grid and as the primary visual on the project page if no main video is provided.',
             fields: [
                 { name: 'asset', type: 'image', options: { hotspot: true } },
                 { name: 'externalUrl', type: 'url' },
@@ -123,7 +124,20 @@ export const project = defineType({
             title: 'Main Video URL (Vimeo/YT)',
             type: 'url',
             group: 'video',
+            description: 'Optional: If left empty, the project will display the Featured Image or Main Image at the top.',
             hidden: ({ document }) => (document as any)?.projectType !== 'video',
+        }),
+        defineField({
+            name: 'featuredImage',
+            title: 'Featured Detail Image',
+            type: 'object',
+            group: 'video',
+            description: 'Optional: A different image to show at the top of the detail page. Falls back to Main Project Image if empty.',
+            hidden: ({ document }) => (document as any)?.projectType !== 'video',
+            fields: [
+                { name: 'asset', type: 'image', options: { hotspot: true } },
+                { name: 'externalUrl', type: 'url' },
+            ],
         }),
         defineField({
             name: 'additionalVideos',
