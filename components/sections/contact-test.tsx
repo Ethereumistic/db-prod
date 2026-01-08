@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CornerBorders } from "@/components/ui/corner-borders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,26 +26,20 @@ const inquiryTypes = [
 
 type AnimationPhase = "idle" | "pattern" | "opening" | "closing" | "success";
 
-export function Contact() {
+export function ContactTest() {
     const [selectedInquiry, setSelectedInquiry] = useState("");
     const [animationPhase, setAnimationPhase] = useState<AnimationPhase>("idle");
     const [capturedName, setCapturedName] = useState("");
     const nameInputRef = useRef<HTMLInputElement>(null);
-    const formRef = useRef<HTMLFormElement>(null);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const triggerAnimation = () => {
         if (animationPhase !== "idle") return;
 
         // Capture the name from the input
         const nameValue = nameInputRef.current?.value || "клиент";
         setCapturedName(nameValue);
 
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        formData.append("access_key", "19d56402-773c-4e1b-893c-78840ceb7ade");
-
-        // Start animation immediately
+        // Phase 1: Show checkered pattern + fade out text
         setAnimationPhase("pattern");
 
         // Phase 2: Open the clapper (after pattern appears)
@@ -58,32 +52,10 @@ export function Contact() {
             setAnimationPhase("closing");
         }, 1200);
 
-        // Submit form in background during animation
-        try {
-            const response = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            // Phase 4: Show success (after clap closes)
-            setTimeout(() => {
-                if (data.success) {
-                    setAnimationPhase("success");
-                    form.reset();
-                } else {
-                    // If error, reset to idle
-                    setAnimationPhase("idle");
-                    alert(data.message || "Грешка при изпращането. Моля, опитайте отново.");
-                }
-            }, 1500);
-        } catch (error) {
-            setTimeout(() => {
-                setAnimationPhase("idle");
-                alert("Възникна техническа грешка. Моля, опитайте по-късно.");
-            }, 1500);
-        }
+        // Phase 4: Show success message in form
+        setTimeout(() => {
+            setAnimationPhase("success");
+        }, 1500);
     };
 
     const resetForm = () => {
@@ -104,10 +76,15 @@ export function Contact() {
     };
 
     return (
-        <section id="contact" className="relative py-24 bg-black overflow-hidden -scroll-mt-4">
+        <section id="contact-test" className="relative py-24 bg-black -scroll-mt-4">
+            {/* Debug indicator */}
+            <div className="absolute top-4 right-4 z-50 bg-yellow-500 text-black px-3 py-1 text-sm font-mono">
+                DEBUG: {animationPhase}
+            </div>
+
             <div className="container max-w-4xl mx-auto px-6 relative z-10">
                 {/* Header with Clapper Animation - overflow visible to show clapper edges */}
-                <div className="relative overflow-visible">
+                <div className="relative  overflow-visible">
                     {/* The animated clapper part */}
                     <motion.div
                         className="relative"
@@ -193,11 +170,11 @@ export function Contact() {
                 >
                     <CornerBorders cornerClassName="w-8 h-8" />
 
-                    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Name */}
                             <div className="space-y-2">
-                                <Label htmlFor="form-name">Име</Label>
+                                <Label htmlFor="test-form-name">Име</Label>
                                 <div className="relative">
                                     {/* Original input - blurs during animation, hidden on success */}
                                     <motion.div
@@ -210,9 +187,8 @@ export function Contact() {
                                     >
                                         <Input
                                             ref={nameInputRef}
-                                            id="form-name"
+                                            id="test-form-name"
                                             name="name"
-                                            required
                                             placeholder="Вашето име"
                                             className="h-12"
                                             disabled={isAnimating || animationPhase === "success"}
@@ -235,7 +211,7 @@ export function Contact() {
 
                             {/* Email */}
                             <div className="space-y-2">
-                                <Label htmlFor="form-email">Имейл</Label>
+                                <Label htmlFor="test-form-email">Имейл</Label>
                                 <div className="relative">
                                     <motion.div
                                         animate={{
@@ -246,10 +222,9 @@ export function Contact() {
                                         className={animationPhase === "success" ? "absolute inset-0" : ""}
                                     >
                                         <Input
-                                            id="form-email"
+                                            id="test-form-email"
                                             name="email"
                                             type="email"
-                                            required
                                             placeholder="email@example.com"
                                             className="h-12"
                                             disabled={isAnimating || animationPhase === "success"}
@@ -271,7 +246,7 @@ export function Contact() {
 
                             {/* Phone */}
                             <div className="space-y-2">
-                                <Label htmlFor="form-phone">Телефон</Label>
+                                <Label htmlFor="test-form-phone">Телефон</Label>
                                 <div className="relative">
                                     <motion.div
                                         animate={{
@@ -282,10 +257,9 @@ export function Contact() {
                                         className={animationPhase === "success" ? "absolute inset-0" : ""}
                                     >
                                         <Input
-                                            id="form-phone"
+                                            id="test-form-phone"
                                             name="phone"
                                             type="tel"
-                                            required
                                             placeholder="+359 ..."
                                             className="h-12"
                                             disabled={isAnimating || animationPhase === "success"}
@@ -343,7 +317,7 @@ export function Contact() {
 
                         {/* Message */}
                         <div className="space-y-2">
-                            <Label htmlFor="form-message">Съобщение</Label>
+                            <Label htmlFor="test-form-message">Съобщение</Label>
                             <div className="relative">
                                 <motion.div
                                     animate={{
@@ -354,9 +328,8 @@ export function Contact() {
                                     className={animationPhase === "success" ? "absolute inset-0" : ""}
                                 >
                                     <Textarea
-                                        id="form-message"
+                                        id="test-form-message"
                                         name="message"
-                                        required
                                         placeholder="Напишете вашето съобщение тук..."
                                         className="min-h-[150px] resize-none"
                                         disabled={isAnimating || animationPhase === "success"}
@@ -402,8 +375,9 @@ export function Contact() {
                                 </Button>
                             ) : (
                                 <Button
-                                    type="submit"
-                                    disabled={isAnimating}
+                                    type="button"
+                                    onClick={triggerAnimation}
+                                    disabled={animationPhase !== "idle"}
                                     className="w-full relative group/btn bg-white text-black hover:bg-white/90 font-black uppercase tracking-tighter h-14 text-lg overflow-hidden transition-all duration-300 active:scale-[0.98]"
                                 >
                                     <CornerBorders isActive groupName="btn" cornerClassName="border-black" />
@@ -411,10 +385,10 @@ export function Contact() {
                                         {isAnimating ? (
                                             <>
                                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                                Изпращане...
+                                                Анимация...
                                             </>
                                         ) : (
-                                            "Изпрати запитване"
+                                            "🎬 Тествай Анимацията"
                                         )}
                                     </span>
                                 </Button>

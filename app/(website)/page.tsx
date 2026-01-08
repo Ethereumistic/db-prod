@@ -6,6 +6,7 @@ import { Partners } from "@/components/sections/partners";
 import { Portfolio } from "@/components/sections/portfolio";
 import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
+import { ContactTest } from "@/components/sections/contact-test";
 
 export default async function Home() {
     const [services, categories, projects] = await Promise.all([
@@ -22,6 +23,7 @@ export default async function Home() {
             <Partners />
             <About />
             <Contact />
+            {/* <ContactTest /> */}
         </>
     );
 }
