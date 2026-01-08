@@ -1,5 +1,5 @@
 import { client } from "@/lib/sanity/client";
-import { projectBySlugQuery } from "@/lib/sanity/queries";
+import { projectBySlugQuery, relatedProjectsQuery, categoriesQuery } from "@/lib/sanity/queries";
 import { ProjectDetail } from "@/components/sections/project-detail";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -22,11 +22,29 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
     const { slug } = await params;
+
+    // Fetch project, all categories (for badges), and related projects in parallel
     const project = await client.fetch(projectBySlugQuery, { slug });
 
     if (!project) {
         notFound();
     }
 
-    return <ProjectDetail project={project} />;
+    const categoryIds = project.categories?.map((cat: any) => cat._id) || [];
+
+    const [relatedProjects, categories] = await Promise.all([
+        client.fetch(relatedProjectsQuery, {
+            categoryIds,
+            currentSlug: slug
+        }),
+        client.fetch(categoriesQuery)
+    ]);
+
+    return (
+        <ProjectDetail
+            project={project}
+            relatedProjects={relatedProjects}
+            categories={categories}
+        />
+    );
 }

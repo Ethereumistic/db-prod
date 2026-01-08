@@ -135,7 +135,8 @@ export const project = defineType({
                 type: 'object',
                 fields: [
                     { name: 'title', type: 'string', title: 'Video Title (e.g. Behind the Scenes)' },
-                    { name: 'url', type: 'url', title: 'Video URL' }
+                    { name: 'url', type: 'url', title: 'Video URL' },
+                    { name: 'summary', type: 'text', title: 'Video Summary', rows: 3 }
                 ]
             }]
         }),

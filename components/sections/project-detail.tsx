@@ -2,12 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CornerBorders } from "@/components/ui/corner-borders";
+import { useState, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { urlFor } from "@/lib/sanity/image";
 import * as LucideIcons from "lucide-react";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel";
 import {
     ChevronLeft,
     Share2,
@@ -20,12 +28,15 @@ import {
     Info,
     Wrench
 } from "lucide-react";
+import { ProjectCard } from "@/components/portfolio/project-card";
 
 interface ProjectDetailProps {
     project: any;
+    relatedProjects?: any[];
+    categories?: any[];
 }
 
-export function ProjectDetail({ project }: ProjectDetailProps) {
+export function ProjectDetail({ project, relatedProjects, categories }: ProjectDetailProps) {
     const imageSrc = project.mainImage?.asset
         ? urlFor(project.mainImage.asset).url()
         : (project.mainImage?.externalUrl || "/placeholder.jpg");
@@ -43,8 +54,50 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
         return null;
     };
 
+    const [activeVideoIndex, setActiveVideoIndex] = useState<number>(-1); // -1 for main video
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        };
+
+        const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const index = parseInt(entry.target.getAttribute('data-video-index') || '-1');
+                    setActiveVideoIndex(index);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(handleIntersect, observerOptions);
+
+        // Observe main video within this container
+        const mainVideo = containerRef.current.querySelector('[data-video-index="-1"]');
+        if (mainVideo) observer.observe(mainVideo);
+
+        // Observe additional videos within this container
+        const addVideos = containerRef.current.querySelectorAll('.additional-video-container');
+        addVideos.forEach(vid => observer.observe(vid));
+
+        return () => observer.disconnect();
+    }, [project.additionalVideos]);
+
+    const activeSummary = activeVideoIndex === -1
+        ? project.summary
+        : (project.additionalVideos?.[activeVideoIndex]?.summary || project.summary);
+
+    const activeTitle = activeVideoIndex === -1
+        ? "Основни Детайли"
+        : project.additionalVideos?.[activeVideoIndex]?.title || `Видео ${activeVideoIndex + 2}`;
+
     return (
-        <section className="min-h-screen bg-black pt-26 pb-24">
+        <section ref={containerRef} className="min-h-screen bg-black pt-26 pb-24">
             <div className="container mx-auto px-4">
                 {/* Navigation Back */}
                 <motion.div
@@ -81,6 +134,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                         <div className="space-y-32">
                             {/* Primary Visual */}
                             <motion.div
+                                id="main-video-container"
+                                data-video-index="-1"
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
@@ -113,10 +168,11 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                             {project.additionalVideos?.map((vid: any, idx: number) => (
                                 <motion.div
                                     key={idx}
+                                    data-video-index={idx}
                                     initial={{ opacity: 0, y: 40 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    className="space-y-8"
+                                    className="additional-video-container space-y-8"
                                 >
                                     <div className="space-y-6">
                                         <h3 className="text-6xl md:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9] text-left">
@@ -139,6 +195,29 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Video Summary Card (Visible on Mobile or under video as requested) */}
+                                    {vid.summary && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            className="relative group/summ p-10 border border-white/5 bg-white/2 backdrop-blur-sm"
+                                        >
+                                            <CornerBorders isActive={false} groupName="summ" />
+                                            <div className="flex items-start gap-6">
+                                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center text-white/30 shrink-0">
+                                                    <FileText size={24} />
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/20">Резюме на видео</h4>
+                                                    <p className="text-xl text-white/80 leading-relaxed font-light italic">
+                                                        "{vid.summary}"
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
@@ -152,7 +231,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                             transition={{ delay: 0.4 }}
                             className="sticky top-32"
                         >
-                            <div className="p-8 border border-white/10 bg-white/5 backdrop-blur-xl relative space-y-10">
+                            <div className="p-8 pt-16 border border-white/10 bg-white/5 backdrop-blur-xl relative space-y-10">
                                 {/* Badges in Top Right */}
                                 <div className="absolute top-6 right-6 flex items-end gap-2 pointer-events-none">
                                     <Badge className="bg-white/10 backdrop-blur-md border-white/20 text-[8px] text-white px-3 py-0.5 font-black tracking-widest uppercase">
@@ -165,22 +244,34 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                                     ))}
                                 </div>
 
-                                <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/30 border-b border-white/5 pb-4 pr-20">Детайли на проект</h4>
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={activeVideoIndex}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="space-y-8"
+                                    >
+                                        <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/30 border-b border-white/5 pb-4 pr-20">
+                                            {activeTitle}
+                                        </h4>
 
-                                {/* Project Summary Section */}
-                                {project.summary && (
-                                    <div className="relative group/nav p-6 bg-white/2 hover:bg-white/5 transition-all">
-                                        <CornerBorders isActive={false} groupName="nav" />
-                                        <div className="relative overflow-hidden">
-                                            <div className="float-left mr-4 mt-1 w-10 h-10 bg-white/5 flex items-center justify-center text-white/30 group-hover/nav:text-white transition-colors">
-                                                <Info size={18} />
+                                        {activeSummary && (
+                                            <div className="relative group/nav p-6 bg-white/2 hover:bg-white/5 transition-all">
+                                                <CornerBorders isActive={false} groupName="nav" />
+                                                <div className="relative overflow-hidden">
+                                                    <div className="float-left mr-4 mt-1 w-10 h-10 bg-white/5 flex items-center justify-center text-white/30 group-hover/nav:text-white transition-colors">
+                                                        <Info size={18} />
+                                                    </div>
+                                                    <p className="text-base text-white/70 leading-relaxed font-light">
+                                                        {activeSummary}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <p className="text-base text-white/70 leading-relaxed font-light">
-                                                {project.summary}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
+                                        )}
+                                    </motion.div>
+                                </AnimatePresence>
 
                                 {/* Meta Items Grid */}
                                 <div className="grid grid-cols-1 gap-4">
@@ -287,6 +378,49 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                         </motion.div>
                     </div>
                 </div>
+
+
+
+                {/* Related Projects */}
+                {relatedProjects && relatedProjects.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="space-y-12 mb-24"
+                    >
+                        <div className="flex flex-col items-start gap-4">
+                            <h4 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter">
+                                ДРУГИ <span className="text-white/40">{project.categories?.[0]?.title || 'ПОДОБНИ ПРОЕКТИ'}</span>
+                            </h4>
+                            <div className="w-20 h-1 bg-white/10" />
+                        </div>
+
+                        <Carousel
+                            opts={{
+                                align: "start",
+                                loop: true,
+                                dragFree: true,
+                            }}
+                            className="w-full"
+                        >
+                            <CarouselContent className="-ml-4">
+                                {relatedProjects.map((relProject) => (
+                                    <CarouselItem key={relProject._id} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-[31%]">
+                                        <ProjectCard
+                                            project={relProject}
+                                            categories={categories || []}
+                                        />
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                            <div className="flex justify-end gap-2 mt-8">
+                                <CarouselPrevious className="static translate-y-0 bg-slate-900 hover:bg-slate-800 border-white/10 text-white" />
+                                <CarouselNext className="static translate-y-0 bg-slate-900 hover:bg-slate-800 border-white/10 text-white" />
+                            </div>
+                        </Carousel>
+                    </motion.div>
+                )}
 
                 {/* Beautified Contact CTA - Moved outside grid for full width */}
                 <motion.div

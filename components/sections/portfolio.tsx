@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CornerBorders } from "@/components/ui/corner-borders";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { urlFor } from "@/lib/sanity/image";
-import { Play, ExternalLink, Filter } from "lucide-react";
+import { ProjectCard } from "@/components/portfolio/project-card";
+import { Filter } from "lucide-react";
 
 interface PortfolioProps {
     projects: any[];
@@ -42,7 +40,7 @@ export function Portfolio({ projects, categories, services }: PortfolioProps) {
     };
 
     return (
-        <section id="portfolio" className="py-24 bg-black overflow-hidden scroll-mt-20">
+        <section id="portfolio" className="py-24 bg-black overflow-hidden scroll-mt-20 max-w-7xl mx-auto">
             <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="flex flex-col items-center mb-16 text-center space-y-4">
@@ -144,83 +142,13 @@ export function Portfolio({ projects, categories, services }: PortfolioProps) {
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                     <AnimatePresence mode="popLayout">
-                        {filteredProjects.map((project) => {
-                            const imageSrc = project.mainImage?.asset
-                                ? urlFor(project.mainImage.asset).url()
-                                : (project.mainImage?.externalUrl || "/placeholder.jpg");
-
-                            return (
-                                <motion.div
-                                    key={project._id}
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    transition={{ duration: 0.4, ease: "circOut" }}
-                                >
-                                    <Link href={`/portfolio/${project.slug.current}`}>
-                                        <Card className="group relative aspect-4/5 overflow-hidden border-white/5 bg-slate-900/50 hover:border-white/20 transition-all duration-700">
-                                            {/* Image */}
-                                            <Image
-                                                src={imageSrc}
-                                                alt={project.title}
-                                                fill
-                                                className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110 opacity-70 group-hover:opacity-100"
-                                            />
-
-                                            {/* Overlay */}
-                                            <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent transition-opacity duration-500" />
-
-                                            {/* Content */}
-                                            <div className="absolute inset-0 flex flex-col justify-end p-8">
-                                                <div className="space-y-4">
-                                                    <div className="flex gap-2">
-                                                        {project.projectType === 'video' && (
-                                                            <Badge className="bg-white/10 backdrop-blur-md border-white/20 text-[10px] text-white/80">
-                                                                VIDEO
-                                                            </Badge>
-                                                        )}
-                                                        {project.platform && (
-                                                            <Badge className="bg-white/10 backdrop-blur-md border-white/20 text-[10px] text-white/80 uppercase">
-                                                                {project.platform}
-                                                            </Badge>
-                                                        )}
-                                                    </div>
-
-                                                    <h3 className="text-2xl font-black text-white leading-tight">
-                                                        {project.title}
-                                                    </h3>
-
-                                                    {project.metrics && (
-                                                        <p className="text-white/50 text-xs font-medium uppercase tracking-widest">
-                                                            {project.metrics}
-                                                        </p>
-                                                    )}
-
-                                                    <div className="pt-4 flex items-center justify-between">
-                                                        {project.videoUrl ? (
-                                                            <div className="inline-flex items-center gap-2 text-white text-sm font-bold group/btn">
-                                                                <div className="w-10 h-10 bg-white flex items-center justify-center text-black group-hover/btn:scale-110 transition-transform">
-                                                                    <Play size={16} fill="currentColor" />
-                                                                </div>
-                                                                <span>WATCH</span>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="inline-flex items-center gap-2 text-white text-sm font-bold group/btn">
-                                                                <div className="w-10 h-10 border border-white/20 bg-white/5 backdrop-blur-sm flex items-center justify-center text-white group-hover/btn:bg-white group-hover/btn:text-black transition-all">
-                                                                    <ExternalLink size={16} />
-                                                                </div>
-                                                                <span>VIEW PROJECT</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </Link>
-                                </motion.div>
-                            );
-                        })}
+                        {filteredProjects.map((project) => (
+                            <ProjectCard
+                                key={project._id}
+                                project={project}
+                                categories={categories}
+                            />
+                        ))}
                     </AnimatePresence>
                 </motion.div>
 

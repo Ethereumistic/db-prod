@@ -55,6 +55,7 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
         icon
     },
     "categories": categories[]-> {
+        _id,
         title,
         slug { current }
     },
@@ -71,4 +72,23 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
     summary,
     externalLinks,
     _createdAt
+}`;
+
+export const relatedProjectsQuery = groq`*[_type == "project" && references($categoryIds) && slug.current != $currentSlug] | order(_createdAt desc) {
+    _id,
+    title,
+    slug { current },
+    projectType,
+    "serviceId": service._ref,
+    "categoryIds": categories[]._ref,
+    mainImage {
+        asset,
+        externalUrl
+    },
+    videoUrl,
+    skills,
+    platform,
+    metrics,
+    projectDate,
+    summary
 }`;
