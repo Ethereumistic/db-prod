@@ -166,20 +166,14 @@ export function Hero() {
                 )}
             >
                 <div className="max-w-4xl mx-auto text-center space-y-8">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 text-white/60 text-sm mb-4 backdrop-blur-sm">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        Приемаме резервации за 2026
-                    </div>
 
-                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.9]">
+
+                    <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.9]">
                         ТВОРИМ <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/80 to-white/40">ВИЗУАЛНИ</span> ИЗЖИВЯВАНИЯ
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-foreground/60 max-w-2xl mx-auto font-light leading-relaxed">
-                        db PRODUCTIONS е бутиково творческо студио, специализирано във фотографията, киното и дигиталното разказване на истории.
+                    <p className="hidden md:block text-xl md:text-2xl text-foreground/60 max-w-2xl mx-auto font-light leading-relaxed">
+                        db PRODUCTIONS е бутиково творческо студио, специализирано във видеографията, киното и дигиталното разказване на истории.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">

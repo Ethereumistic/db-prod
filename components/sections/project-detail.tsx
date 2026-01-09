@@ -296,14 +296,14 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="text-6xl md:text-8xl font-black text-white tracking-tighter uppercase leading-[0.9]"
+                                className="text-3xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter uppercase leading-[0.9]"
                             >
                                 {project.title}
                             </motion.h1>
                         </div>
 
                         {/* Visuals / Multi-Video */}
-                        <div className="space-y-32">
+                        <div className="md:space-y-32 space-y-8">
                             {/* Primary Visual */}
                             <motion.div
                                 id="main-video-container"
@@ -336,6 +336,90 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                 )}
                             </motion.div>
 
+                            {/* Mobile Project Summary Card - Visible only on mobile, below first video */}
+                            {project.summary && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4 }}
+                                    className="relative group/summ p-6 sm:p-8 border border-white/5 bg-white/2 backdrop-blur-sm lg:hidden"
+                                >
+                                    <CornerBorders isActive={false} groupName="summ" />
+
+                                    {/* Project Year - bottom left */}
+                                    <div className="top-2 right-2 absolute">
+                                        <p className="text-white/40 font-black text-xs">
+                                            {project.projectDate
+                                                ? new Date(project.projectDate).getFullYear()
+                                                : new Date(project._createdAt).getFullYear()}
+                                        </p>
+                                    </div>
+
+                                    {/* Badges */}
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        <Badge className="bg-white/10 backdrop-blur-md border-white/20 text-[8px] text-white px-3 py-0.5 font-black tracking-widest uppercase">
+                                            {project.service?.title}
+                                        </Badge>
+                                        {project.categories?.slice(0, 2).map((cat: any) => (
+                                            <Badge key={cat.slug.current} variant="outline" className="border-white/10 text-[8px] text-white/40 px-3 py-0.5 font-black tracking-widest uppercase whitespace-nowrap">
+                                                {cat.title}
+                                            </Badge>
+                                        ))}
+
+                                    </div>
+
+                                    {/* Summary */}
+                                    <h4 className="text-[9px] sm:text-[10px] font-black tracking-[0.3em] sm:tracking-[0.4em] uppercase text-white/20 mb-3">Основни Детайли</h4>
+                                    <p className="text-sm sm:text-base text-white/70 leading-relaxed font-light">
+                                        {project.summary}
+                                    </p>
+
+                                    {/* Skills for mobile */}
+                                    {project.skills && project.skills.length > 0 && (
+                                        <div className="mt-5 pt-4 border-t border-white/5">
+                                            <p className="text-[8px] text-white/20 uppercase font-black tracking-[0.2em] mb-2">Умения</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {project.skills.map((skill: string, sIdx: number) => (
+                                                    <span key={sIdx} className="text-[9px] bg-white/5 text-white/60 px-2 py-0.5 uppercase font-bold tracking-wider">
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+
+
+                                    {/* External Links for mobile */}
+                                    {project.externalLinks?.length > 0 && (
+                                        <div className="mt-5 pt-4 border-t border-white/5 space-y-3">
+                                            <h4 className="text-[9px] font-black tracking-[0.4em] uppercase text-white/20">Директни връзки</h4>
+                                            <div className="grid grid-cols-1 gap-3">
+                                                {project.externalLinks.map((link: any, lIdx: number) => {
+                                                    const LinkIcon = (LucideIcons as any)[link.icon] || LucideIcons.ArrowRight;
+                                                    return (
+                                                        <div key={lIdx} className="relative group/nav flex items-center gap-4 bg-white/2 hover:bg-white/5 p-3 transition-all w-full border border-white/5 hover:border-white/10">
+                                                            <CornerBorders isActive={false} groupName="nav" />
+                                                            <div className="w-8 h-8 bg-white/5 flex items-center justify-center text-white/30 group-hover/nav:text-white transition-colors shrink-0">
+                                                                <LinkIcon size={16} />
+                                                            </div>
+                                                            <a
+                                                                href={link.url}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 group-hover/nav:text-white transition-colors"
+                                                            >
+                                                                {link.label}
+                                                            </a>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+
                             {/* Additional Videos */}
                             {project.additionalVideos?.map((vid: any, idx: number) => (
                                 <motion.div
@@ -346,8 +430,8 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                     viewport={{ once: true }}
                                     className="additional-video-container  space-y-8"
                                 >
-                                    <div className=" space-y-6">
-                                        <h3 className="text-6xl md:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9] text-left">
+                                    <div className="space-y-6">
+                                        <h3 className="text-2xl sm:text-4xl md:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9] text-left">
                                             {vid.title || `Видео ${idx + 2}`}
                                         </h3>
                                     </div>
@@ -374,19 +458,14 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                             initial={{ opacity: 0, y: 20 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
-                                            className="relative group/summ p-10 border border-white/5 bg-white/2 backdrop-blur-sm lg:hidden"
+                                            className="relative group/summ p-5 sm:p-6 border border-white/5 bg-white/2 backdrop-blur-sm lg:hidden"
                                         >
                                             <CornerBorders isActive={false} groupName="summ" />
-                                            <div className="flex items-start gap-6">
-                                                <div className="w-12 h-12 bg-white/5 flex items-center justify-center text-white/30 shrink-0">
-                                                    <FileText size={24} />
-                                                </div>
-                                                <div className="space-y-4">
-                                                    <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/20">Резюме на видео</h4>
-                                                    <p className="text-xl text-white/80 leading-relaxed font-light italic">
-                                                        "{vid.summary}"
-                                                    </p>
-                                                </div>
+                                            <div className="space-y-3">
+                                                <h4 className="text-[9px] sm:text-[10px] font-black tracking-[0.3em] sm:tracking-[0.4em] uppercase text-white/20">Резюме на видео</h4>
+                                                <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed font-light italic">
+                                                    "{vid.summary}"
+                                                </p>
                                             </div>
                                         </motion.div>
                                     )}
@@ -403,10 +482,10 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                 className="space-y-8 mt-24"
                             >
                                 <div className="space-y-4">
-                                    <h3 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[0.9]">
+                                    <h3 className="text-2xl sm:text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[0.9]">
                                         Галерия
                                     </h3>
-                                    <div className="w-16 h-1 bg-white/20" />
+                                    <div className="w-12 sm:w-16 h-1 bg-white/20" />
                                 </div>
                                 <ProjectGallery
                                     images={project.gallery.images}
@@ -416,8 +495,8 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                         )}
                     </div>
 
-                    {/* Sidebar Info */}
-                    <div className="lg:col-span-4 lg:block">
+                    {/* Sidebar Info - Hidden on mobile, visible on desktop */}
+                    <div className="hidden lg:block lg:col-span-4">
                         <CenteredStickySidebar>
                             <div className="p-8 pt-16 border border-white/10 bg-white/5 backdrop-blur-xl relative space-y-10">
                                 {/* Badges in Top Right */}
@@ -556,8 +635,8 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                         className="space-y-12 mb-24"
                     >
                         <div className="flex flex-col items-start gap-4">
-                            <h4 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter">
-                                ДРУГИ <span className="text-white/40">{project.categories?.[0]?.title || 'ПОДОБНИ ПРОЕКТИ'}</span>
+                            <h4 className="text-3xl md:text-5xl font-black text-white/40 uppercase tracking-tighter">
+                                ДРУГИ <span className="text-white">{project.categories?.[0]?.title || 'ПОДОБНИ ПРОЕКТИ'}</span>
                             </h4>
                             <div className="w-20 h-1 bg-white/10" />
                         </div>
@@ -606,8 +685,8 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                             </p>
                         </div>
                         <Link
-                            href="/contact"
-                            className="h-auto py-6 px-12 bg-white text-black hover:bg-white/90 text-sm font-black uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95 inline-flex items-center justify-center"
+                            href="/#contact"
+                            className="h-auto py-6 px-6 bg-white text-black hover:bg-white/90 text-sm font-black uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95 inline-flex items-center justify-center"
                         >
                             Свържете се с нас
                         </Link>

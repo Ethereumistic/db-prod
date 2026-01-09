@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 import { Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import {
@@ -37,6 +38,7 @@ const navItems = [
 export function Navbar() {
     const [scrolled, setScrolled] = React.useState(false);
     const [currentHash, setCurrentHash] = React.useState("");
+    const [isOpen, setIsOpen] = React.useState(false);
     const pathname = usePathname();
     const router = useRouter();
 
@@ -127,41 +129,49 @@ export function Navbar() {
                     </div>
 
                     {/* Mobile Navigation */}
-                    <div className="md:hidden">
-                        <Sheet>
+                    <div className="md:hidden ">
+                        <Sheet open={isOpen} onOpenChange={setIsOpen}>
                             <SheetTrigger
                                 render={
-                                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 transition-transform active:scale-90 h-10 w-10">
-                                        <Menu className="h-6 w-6" />
+                                    <Button variant="ghost" size="icon" className="text-white  transition-transform active:scale-90 h-10 w-10 relative overflow-hidden">
+                                        <div className="relative h-6 w-6">
+                                            <motion.div
+                                                animate={isOpen ? { rotate: 90, opacity: 0, scale: 0 } : { rotate: 0, opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                                className="absolute inset-0 flex items-center justify-center"
+                                            >
+                                                <Menu className="h-6 w-6" />
+                                            </motion.div>
+                                            <motion.div
+                                                initial={{ rotate: -90, opacity: 0, scale: 0 }}
+                                                animate={isOpen ? { rotate: 0, opacity: 1, scale: 1 } : { rotate: -90, opacity: 0, scale: 0 }}
+                                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                                className="absolute inset-0 flex items-center justify-center"
+                                            >
+                                                <X className="h-6 w-6" />
+                                            </motion.div>
+                                        </div>
                                     </Button>
                                 }
                             />
                             <SheetContent
                                 side="right"
                                 showCloseButton={false}
-                                className="bg-black/95 border-l border-white/10 text-white backdrop-blur-2xl w-full sm:max-w-none p-0"
+                                className={cn("bg-black/95 border-l border-white/10 text-white"
+                                    , "backdrop-blur-2xl w-full sm:max-w-none p-0 "
+                                    , scrolled ? "mt-2" : " mt-6"
+                                )}
                             >
                                 {/* Mobile Menu Header - Matches Navbar */}
                                 <div className={cn(
                                     "px-4 transition-all duration-500",
-                                    scrolled ? "py-2" : "py-6"
+                                    scrolled ? "py-2" : "py-6  mt-6"
                                 )}>
                                     <div className={cn(
-                                        "flex items-center justify-between border border-white/10 px-6 py-2 bg-black/20 backdrop-blur-xl",
+                                        "flex items-center justify-between px-6 py-2 bg-black/20 backdrop-blur-xl",
                                         scrolled && "scale-[0.98]"
                                     )}>
-                                        <Logo
-                                            size="sm"
-                                            variant="logo"
-                                            layout="horizontal_right"
-                                            textClassName=""
-                                        />
 
-                                        <SheetClose render={
-                                            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 transition-transform active:scale-90 h-10 w-10">
-                                                <X className="h-6 w-6" />
-                                            </Button>
-                                        } />
                                     </div>
                                 </div>
 

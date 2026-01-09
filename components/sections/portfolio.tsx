@@ -159,7 +159,7 @@ function PortfolioContent({ projects, categories, services }: PortfolioProps) {
                             variant="corners"
                             isActive={!activeService}
                             onClick={() => handleServiceChange(null)}
-                            className="relative px-6 md:px-10 py-4  text-[10px] md:text-xs font-black tracking-[0.3em] uppercase transition-all duration-500 rounded-none h-auto"
+                            className="relative px-2 md:px-10 py-4  text-[10px] md:text-xs font-black tracking-[0.3em] uppercase transition-all duration-500 rounded-none h-auto"
                         >
                             Всички
                         </Button>
@@ -170,7 +170,7 @@ function PortfolioContent({ projects, categories, services }: PortfolioProps) {
                                 isActive={activeService === service._id}
                                 onClick={() => handleServiceChange(service._id)}
                                 className={cn(
-                                    "relative px-8 md:px-12 py-4 text-[10px] md:text-xs font-black tracking-[0.3em] uppercase transition-all duration-500 rounded-none h-auto border-l border-white/10",
+                                    "relative px-4 md:px-12 py-4 text-[10px] md:text-xs font-black tracking-[0.3em] uppercase transition-all duration-500 rounded-none h-auto border-l border-white/10",
 
                                 )}
                             >
