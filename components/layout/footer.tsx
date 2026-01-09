@@ -6,6 +6,7 @@ import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 import { CornerBorders } from "@/components/ui/corner-borders";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const footerLinks = [
     { title: "За нас", href: "/about" },
@@ -91,33 +92,56 @@ export function Footer() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 pt-4">
-                                <div className="space-y-2 relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
+                            <div className="grid grid-cols-1 gap-6 lg:gap-8 pt-4">
+
+                                <div className=" relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
                                     <CornerBorders />
-                                    <div className="relative z-10">
-                                        <p className="text-white font-medium whitespace-nowrap">Даниел Ненов</p>
-                                        <a
-                                            href="tel:+359882664006"
-                                            className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
-                                        >
-                                            <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
-                                            +359 882 664 006
-                                        </a>
+                                    <div className="relative z-10 flex items-center gap-4 text-left">
+                                        <Avatar size="xl" className="border border-white/10 group-hover/nav:border-white/20 transition-colors duration-300">
+                                            <AvatarImage
+                                                src="https://cdn.jsdelivr.net/gh/Ethereumistic/db-prod-assets/about/dido.png"
+                                                alt="Дилян Калчев"
+                                                className="scale-[2.5] object-[center_-78%] -translate-x-[7%]"
+                                            />
+                                            <AvatarFallback className="text-[10px]">ДК</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="text-white font-medium whitespace-nowrap">Дилян Калчев</p>
+                                            <a
+                                                href="tel:+359877611162"
+                                                className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
+                                            >
+                                                <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                                +359 877 611 162
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="space-y-2 relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
+
+                                <div className=" relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
                                     <CornerBorders />
-                                    <div className="relative z-10">
-                                        <p className="text-white font-medium whitespace-nowrap">Дилян Калчев</p>
-                                        <a
-                                            href="tel:+359877611162"
-                                            className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
-                                        >
-                                            <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
-                                            +359 877 611 162
-                                        </a>
+                                    <div className="relative z-10 flex items-center gap-4 text-left">
+                                        <Avatar size="xl" className="border border-white/10 group-hover/nav:border-white/20 transition-colors duration-300">
+                                            <AvatarImage
+                                                src="https://cdn.jsdelivr.net/gh/Ethereumistic/db-prod-assets/about/dani.png"
+                                                alt="Даниел Ненов"
+                                                className="scale-[2.5] object-[center_-35%] translate-x-[5%]"
+                                            />
+                                            <AvatarFallback className="text-[10px]">ДН</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="text-white font-medium whitespace-nowrap">Даниел Ненов</p>
+                                            <a
+                                                href="tel:+359882664006"
+                                                className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
+                                            >
+                                                <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                                +359 882 664 006
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
