@@ -24,7 +24,7 @@ const flexibleMediaField = {
 
 export const projectCategory = defineType({
     name: 'projectCategory',
-    title: 'Project Categories',
+    title: 'КАТЕГОРИИ',
     type: 'document',
     icon: Tag,
     fields: [
@@ -64,7 +64,7 @@ export const projectCategory = defineType({
             },
             initialValue: 'solo',
             validation: (Rule) => Rule.required(),
-            description: 'SOLO: Leads to /work/[slug] showing contents. MULTI: Leads to /work/[slug] showing cards linking to /work/[slug]/[projectSlug].',
+            description: 'SOLO: Leads to /[slug] showing contents. MULTI: Leads to /[slug] showing cards linking to /[slug]/[projectSlug].',
         }),
         defineField({
             name: 'description',

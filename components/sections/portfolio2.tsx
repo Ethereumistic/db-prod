@@ -21,8 +21,6 @@ interface ProjectCategory {
 
 interface Portfolio2Props {
     categories: ProjectCategory[];
-    projects?: any[];
-    services?: any[];
 }
 
 export function Portfolio2({ categories }: Portfolio2Props) {
@@ -73,7 +71,7 @@ export function Portfolio2({ categories }: Portfolio2Props) {
                                 transition={{ delay: index * 0.1, duration: 0.5 }}
                                 viewport={{ once: true }}
                             >
-                                <Link href={`/work/${category.slug.current}`}>
+                                <Link href={`/${category.slug.current}`}>
                                     <Card className="group relative aspect-video overflow-hidden border-white/5 bg-zinc-900 transition-all duration-700 rounded-none cursor-pointer">
                                         {/* Image */}
                                         <Image

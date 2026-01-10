@@ -1,9 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /* SEO and Performance Optimizations */
+  reactStrictMode: true,
+
+  // Enable compression for better performance
+  compress: true,
+
+  // Powered by header removal for security
+  poweredByHeader: false,
+
   images: {
-    // 'domains' is deprecated. 'remotePatterns' is the new, more secure standard.
+    // Image optimization for Core Web Vitals
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days cache
+
     remotePatterns: [
       {
         protocol: "https",
@@ -15,9 +26,46 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "flagcdn.com",
         port: "",
-        pathname: "**", // Allows all images from this host
+        pathname: "**",
+      },
+      {
+        // Sanity CDN for portfolio images
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+        port: "",
+        pathname: "**",
       },
     ],
+  },
+
+  // SEO: Trailing slash consistency
+  trailingSlash: false,
+
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
   },
 };
 

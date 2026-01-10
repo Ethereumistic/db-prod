@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { CornerBorders } from "@/components/ui/corner-borders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
     ComboboxList,
 } from "@/components/ui/combobox";
 import { Loader2 } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 const inquiryTypes = [
     { value: "question", label: "Имам въпрос относно услуга" },
@@ -24,56 +25,79 @@ const inquiryTypes = [
     { value: "proposal", label: "Искам да предложа сътрудничество" },
 ];
 
-type AnimationPhase = "idle" | "pattern" | "opening" | "closing" | "success";
+/**
+ * Custom hook to detect mobile screen size
+ */
+function useMediaQuery(query: string) {
+    const [matches, setMatches] = useState(false);
+
+    useEffect(() => {
+        const media = window.matchMedia(query);
+        if (media.matches !== matches) {
+            setMatches(media.matches);
+        }
+        const listener = () => setMatches(media.matches);
+        media.addEventListener("change", listener);
+        return () => media.removeEventListener("change", listener);
+    }, [matches, query]);
+
+    return matches;
+}
 
 export function Contact() {
+    const isMobile = useMediaQuery("(max-width: 768px)");
+
+    // Condition rendering to avoid duplicate DOM and ID conflicts
+    return isMobile ? <ContactMovie /> : <ContactBoard />;
+}
+
+// --- CLAPPERBOARD VERSION (DESKTOP) ---
+type BoardAnimationPhase = "idle" | "pattern" | "opening" | "closing" | "success";
+
+function ContactBoard() {
     const [selectedInquiry, setSelectedInquiry] = useState("");
-    const [animationPhase, setAnimationPhase] = useState<AnimationPhase>("idle");
+    const [animationPhase, setAnimationPhase] = useState<BoardAnimationPhase>("idle");
     const [capturedName, setCapturedName] = useState("");
     const nameInputRef = useRef<HTMLInputElement>(null);
-    const formRef = useRef<HTMLFormElement>(null);
+    const sectionRef = useRef<HTMLElement>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (animationPhase !== "idle") return;
 
-        // Capture the name from the input
+        // Pixel-perfect scroll to section with offset (40)
+        setTimeout(() => {
+            const target = sectionRef.current;
+            if (target) {
+                const top = target.getBoundingClientRect().top + window.pageYOffset - 40;
+                window.scrollTo({ top, behavior: "smooth" });
+            }
+        }, 50);
+
         const nameValue = nameInputRef.current?.value || "клиент";
         setCapturedName(nameValue);
 
         const form = e.currentTarget;
         const formData = new FormData(form);
         formData.append("access_key", "19d56402-773c-4e1b-893c-78840ceb7ade");
+        formData.append("subject", `Ново запитване от ${nameValue} - dbproductions.net`);
 
-        // Start animation immediately
         setAnimationPhase("pattern");
+        setTimeout(() => setAnimationPhase("opening"), 600);
+        setTimeout(() => setAnimationPhase("closing"), 1200);
 
-        // Phase 2: Open the clapper (after pattern appears)
-        setTimeout(() => {
-            setAnimationPhase("opening");
-        }, 600);
-
-        // Phase 3: Close the clapper
-        setTimeout(() => {
-            setAnimationPhase("closing");
-        }, 1200);
-
-        // Submit form in background during animation
         try {
             const response = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 body: formData,
             });
-
             const data = await response.json();
 
-            // Phase 4: Show success (after clap closes)
             setTimeout(() => {
                 if (data.success) {
                     setAnimationPhase("success");
                     form.reset();
                 } else {
-                    // If error, reset to idle
                     setAnimationPhase("idle");
                     alert(data.message || "Грешка при изпращането. Моля, опитайте отново.");
                 }
@@ -95,7 +119,6 @@ export function Contact() {
     const isAnimating = animationPhase === "pattern" || animationPhase === "opening" || animationPhase === "closing";
     const showPattern = animationPhase === "pattern" || animationPhase === "opening" || animationPhase === "closing" || animationPhase === "success";
 
-    // Blur amount based on animation phase
     const getBlurAmount = () => {
         if (animationPhase === "pattern") return "blur(2px)";
         if (animationPhase === "opening") return "blur(8px)";
@@ -104,86 +127,52 @@ export function Contact() {
     };
 
     return (
-        <section id="contact" className="relative py-24 bg-black overflow-hidden -scroll-mt-4">
+        <section
+            ref={sectionRef}
+            id="contact"
+            className="relative py-24 bg-black scroll-mt-8"
+        >
             <div className="container max-w-4xl mx-auto px-6 relative z-10">
-                {/* Header with Clapper Animation - overflow visible to show clapper edges */}
                 <div className="relative overflow-visible">
-                    {/* The animated clapper part */}
                     <motion.div
                         className="relative"
-                        style={{
-                            transformOrigin: "bottom left",
-                        }}
-                        animate={{
-                            rotateZ: animationPhase === "opening" ? -20 : 0,
-                        }}
+                        style={{ transformOrigin: "bottom left" }}
+                        animate={{ rotateZ: animationPhase === "opening" ? -20 : 0 }}
                         transition={{
                             duration: 0.3,
                             ease: animationPhase === "closing" ? [0.68, -0.55, 0.265, 1.55] : "easeOut",
                         }}
                     >
-                        {/* Checkered pattern background (cinema clapper) - thicker stripes */}
                         <motion.div
                             className="absolute inset-0 pointer-events-none overflow-hidden border border-border"
                             initial={{ opacity: 0 }}
-                            animate={{
-                                opacity: showPattern ? 1 : 0,
-                            }}
+                            animate={{ opacity: showPattern ? 1 : 0 }}
                             transition={{ duration: 0.3 }}
                         >
                             <div
                                 className="w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4"
                                 style={{
-                                    background: `
-                                        repeating-linear-gradient(
-                                            45deg,
-                                            #ffffff 0px,
-                                            #ffffff 40px,
-                                            #000000 40px,
-                                            #000000 80px
-                                        )
-                                    `,
+                                    background: `repeating-linear-gradient(45deg, #ffffff 0px, #ffffff 40px, #000000 40px, #000000 80px)`,
                                 }}
                             />
                         </motion.div>
 
-                        {/* Header content - fades out when pattern appears */}
                         <motion.div
                             className="flex flex-col items-center text-center space-y-4 p-2 relative z-10"
-                            animate={{
-                                opacity: showPattern ? 0 : 1,
-                            }}
+                            animate={{ opacity: showPattern ? 0 : 1 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <motion.h2
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase"
-                            >
+                            <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase">
                                 СВЪРЖЕТЕ СЕ С <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/50 to-white/20">НАС</span>
-                            </motion.h2>
-                            <motion.div
-                                initial={{ scaleX: 0 }}
-                                whileInView={{ scaleX: 1 }}
-                                transition={{ delay: 0.2 }}
-                                viewport={{ once: true }}
-                                className="w-24 h-1 bg-white/20 origin-center"
-                            />
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ delay: 0.3 }}
-                                viewport={{ once: true }}
-                                className="text-white/40 max-w-2xl text-lg font-light leading-relaxed mb-4"
-                            >
+                            </h2>
+                            <div className="w-24 h-1 bg-white/20 origin-center" />
+                            <p className="text-white/40 max-w-2xl text-lg font-light leading-relaxed mb-4">
                                 Готови ли сте да реализираме Вашата идея? Пишете ни и ще се свържем с Вас.
-                            </motion.p>
+                            </p>
                         </motion.div>
                     </motion.div>
                 </div>
 
-                {/* Form Card */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -192,14 +181,12 @@ export function Contact() {
                     className="relative bg-white/5 border border-white/10 p-8 md:p-12 overflow-hidden"
                 >
                     <CornerBorders cornerClassName="w-8 h-8" />
-
-                    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Name */}
                             <div className="space-y-2">
-                                <Label htmlFor="form-name">Име</Label>
+                                <Label htmlFor="board-name">Име</Label>
                                 <div className="relative">
-                                    {/* Original input - blurs during animation, hidden on success */}
                                     <motion.div
                                         animate={{
                                             filter: isAnimating ? getBlurAmount() : "blur(0px)",
@@ -210,7 +197,7 @@ export function Contact() {
                                     >
                                         <Input
                                             ref={nameInputRef}
-                                            id="form-name"
+                                            id="board-name"
                                             name="name"
                                             required
                                             placeholder="Вашето име"
@@ -218,7 +205,6 @@ export function Contact() {
                                             disabled={isAnimating || animationPhase === "success"}
                                         />
                                     </motion.div>
-                                    {/* Success value */}
                                     {animationPhase === "success" && (
                                         <motion.div
                                             initial={{ filter: "blur(8px)", opacity: 0 }}
@@ -235,7 +221,7 @@ export function Contact() {
 
                             {/* Email */}
                             <div className="space-y-2">
-                                <Label htmlFor="form-email">Имейл</Label>
+                                <Label htmlFor="board-email">Имейл</Label>
                                 <div className="relative">
                                     <motion.div
                                         animate={{
@@ -246,7 +232,7 @@ export function Contact() {
                                         className={animationPhase === "success" ? "absolute inset-0" : ""}
                                     >
                                         <Input
-                                            id="form-email"
+                                            id="board-email"
                                             name="email"
                                             type="email"
                                             required
@@ -271,7 +257,7 @@ export function Contact() {
 
                             {/* Phone */}
                             <div className="space-y-2">
-                                <Label htmlFor="form-phone">Телефон</Label>
+                                <Label htmlFor="board-phone">Телефон</Label>
                                 <div className="relative">
                                     <motion.div
                                         animate={{
@@ -282,7 +268,7 @@ export function Contact() {
                                         className={animationPhase === "success" ? "absolute inset-0" : ""}
                                     >
                                         <Input
-                                            id="form-phone"
+                                            id="board-phone"
                                             name="phone"
                                             type="tel"
                                             required
@@ -305,14 +291,12 @@ export function Contact() {
                                 </div>
                             </div>
 
-                            {/* Inquiry Type - keeps original value */}
+                            {/* Inquiry Type */}
                             <div className="space-y-2">
                                 <Label>Тип на запитването <span className="text-white/20 normal-case">(по желание)</span></Label>
                                 <input type="hidden" name="inquiry_type" value={selectedInquiry} />
                                 <motion.div
-                                    animate={{
-                                        filter: isAnimating ? getBlurAmount() : "blur(0px)",
-                                    }}
+                                    animate={{ filter: isAnimating ? getBlurAmount() : "blur(0px)" }}
                                     transition={{ duration: 0.3 }}
                                 >
                                     <Combobox
@@ -322,17 +306,12 @@ export function Contact() {
                                     >
                                         <ComboboxInput
                                             placeholder="Изберете тип запитване"
-                                            className="h-12 border-white/10 dark:bg-white/5 transition-all text-sm text-white/70 w-full"
+                                            className="h-12 border-white/10 dark:bg-white/5 w-full text-sm"
                                         />
-                                        <ComboboxContent className="bg-zinc-900 border-white/10 text-white/80 p-0">
-                                            <ComboboxList className="p-0">
+                                        <ComboboxContent className="bg-zinc-900 border-white/10 text-white/80">
+                                            <ComboboxList>
                                                 {inquiryTypes.map((type) => (
-                                                    <ComboboxItem
-                                                        key={type.value}
-                                                        value={type.label}
-                                                    >
-                                                        {type.label}
-                                                    </ComboboxItem>
+                                                    <ComboboxItem key={type.value} value={type.label}>{type.label}</ComboboxItem>
                                                 ))}
                                             </ComboboxList>
                                         </ComboboxContent>
@@ -343,7 +322,7 @@ export function Contact() {
 
                         {/* Message */}
                         <div className="space-y-2">
-                            <Label htmlFor="form-message">Съобщение</Label>
+                            <Label htmlFor="board-message">Съобщение</Label>
                             <div className="relative">
                                 <motion.div
                                     animate={{
@@ -354,7 +333,7 @@ export function Contact() {
                                     className={animationPhase === "success" ? "absolute inset-0" : ""}
                                 >
                                     <Textarea
-                                        id="form-message"
+                                        id="board-message"
                                         name="message"
                                         required
                                         placeholder="Напишете вашето съобщение тук..."
@@ -387,40 +366,263 @@ export function Contact() {
                             </div>
                         </div>
 
-                        {/* Button */}
                         <div className="pt-4">
-                            {animationPhase === "success" ? (
-                                <Button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="w-full relative group/btn bg-white text-black hover:bg-white/90 font-black uppercase tracking-tighter h-14 text-lg overflow-hidden transition-all duration-300 active:scale-[0.98]"
-                                >
-                                    <CornerBorders isActive groupName="btn" cornerClassName="border-black" />
-                                    <span className="relative z-10 flex items-center justify-center gap-2">
-                                        Благодаря
-                                    </span>
-                                </Button>
-                            ) : (
-                                <Button
-                                    type="submit"
-                                    disabled={isAnimating}
-                                    className="w-full relative group/btn bg-white text-black hover:bg-white/90 font-black uppercase tracking-tighter h-14 text-lg overflow-hidden transition-all duration-300 active:scale-[0.98]"
-                                >
-                                    <CornerBorders isActive groupName="btn" cornerClassName="border-black" />
-                                    <span className="relative z-10 flex items-center justify-center gap-2">
-                                        {isAnimating ? (
-                                            <>
-                                                <Loader2 className="w-5 h-5 animate-spin" />
-                                                Изпращане...
-                                            </>
-                                        ) : (
-                                            "Изпрати запитване"
-                                        )}
-                                    </span>
-                                </Button>
-                            )}
+                            <Button
+                                type={animationPhase === "success" ? "button" : "submit"}
+                                onClick={animationPhase === "success" ? resetForm : undefined}
+                                disabled={isAnimating}
+                                className="w-full relative group/btn bg-white text-black hover:bg-white/90 font-black uppercase tracking-tighter h-14 text-lg overflow-hidden transition-all duration-300 active:scale-[0.98]"
+                            >
+                                <span className="relative z-10 flex items-center justify-center gap-2">
+                                    {animationPhase === "success" ? "Благодаря" : isAnimating ? <><Loader2 className="w-5 h-5 animate-spin" /> Изпращане...</> : "Изпрати запитване"}
+                                </span>
+                            </Button>
                         </div>
                     </form>
+                </motion.div>
+            </div>
+        </section>
+    );
+}
+
+// --- MOVIE FILM VERSION (MOBILE) ---
+type MovieAnimationPhase = "idle" | "blurring" | "swiping" | "success";
+
+function ContactMovie() {
+    const [selectedInquiry, setSelectedInquiry] = useState("");
+    const [animationPhase, setAnimationPhase] = useState<MovieAnimationPhase>("idle");
+    const [capturedName, setCapturedName] = useState("");
+    const nameInputRef = useRef<HTMLInputElement>(null);
+    const sectionRef = useRef<HTMLElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (animationPhase !== "idle") return;
+
+        // Target the card itself for the scroll so it lands under the navbar
+        setTimeout(() => {
+            const target = cardRef.current;
+            if (target) {
+                const top = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                window.scrollTo({ top, behavior: "smooth" });
+            }
+        }, 50);
+
+        const nameValue = nameInputRef.current?.value || "клиент";
+        setCapturedName(nameValue);
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        formData.append("access_key", "19d56402-773c-4e1b-893c-78840ceb7ade");
+        formData.append("subject", `Ново запитване от ${nameValue} - dbproductions.net`);
+
+        setAnimationPhase("blurring");
+        setTimeout(() => setAnimationPhase("swiping"), 800);
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData,
+            });
+            const data = await response.json();
+
+            setTimeout(() => {
+                if (data.success) {
+                    setAnimationPhase("success");
+                    form.reset();
+                } else {
+                    setAnimationPhase("idle");
+                    alert(data.message || "Грешка при изпращането. Моля, опитайте отново.");
+                }
+            }, 1300);
+        } catch (error) {
+            setTimeout(() => {
+                setAnimationPhase("idle");
+                alert("Възникна техническа грешка. Моля, опитайте по-късно.");
+            }, 1300);
+        }
+    };
+
+    const resetForm = () => {
+        setAnimationPhase("idle");
+        setCapturedName("");
+        setSelectedInquiry("");
+    };
+
+    const isAnimating = animationPhase === "blurring" || animationPhase === "swiping";
+    const showFilmSides = animationPhase === "blurring" || animationPhase === "swiping" || animationPhase === "success";
+
+    const getBlurAmount = () => {
+        if (animationPhase === "blurring") return "blur(4px)";
+        if (animationPhase === "swiping") return "blur(8px)";
+        return "blur(0px)";
+    };
+
+    return (
+        <section
+            ref={sectionRef}
+            id="contact"
+            className="relative py-12 bg-black overflow-hidden"
+        >
+            <div className="container max-w-4xl mx-auto px-6 relative z-10">
+                <div className="relative mb-8">
+                    <motion.div
+                        className="flex flex-col items-center text-center space-y-4 p-2"
+                        animate={{
+                            opacity: showFilmSides && animationPhase !== "success" ? 0.3 : 1,
+                            scale: showFilmSides && animationPhase !== "success" ? 0.95 : 1,
+                        }}
+                    >
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase">
+                            СВЪРЖЕТЕ СЕ <span className="text-white/40">С НАС</span>
+                        </h2>
+                    </motion.div>
+                </div>
+
+                <motion.div
+                    ref={cardRef}
+                    className="relative bg-white/5 border border-white/10 overflow-hidden min-h-[640px] flex flex-col"
+                >
+                    <CornerBorders cornerClassName="w-6 h-6" />
+
+                    {/* Wider Film Strips */}
+                    <AnimatePresence>
+                        {showFilmSides && (
+                            <>
+                                <motion.div
+                                    initial={{ x: -60, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    exit={{ x: -60, opacity: 0 }}
+                                    className="absolute left-0 top-0 bottom-0 w-12 bg-zinc-950 border-r border-white/10 z-20 flex flex-col items-center py-4 gap-4"
+                                >
+                                    {[...Array(15)].map((_, i) => (
+                                        <div key={i} className="w-5 h-6 bg-white/90 rounded-sm" />
+                                    ))}
+                                </motion.div>
+                                <motion.div
+                                    initial={{ x: 60, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    exit={{ x: 60, opacity: 0 }}
+                                    className="absolute right-0 top-0 bottom-0 w-12 bg-zinc-950 border-l border-white/10 z-20 flex flex-col items-center py-4 gap-4"
+                                >
+                                    {[...Array(15)].map((_, i) => (
+                                        <div key={i} className="w-5 h-6 bg-white/90 rounded-sm" />
+                                    ))}
+                                </motion.div>
+                            </>
+                        )}
+                    </AnimatePresence>
+
+                    <div className="relative flex-1 p-6 px-14 overflow-hidden flex flex-col">
+                        <AnimatePresence mode="wait">
+                            {animationPhase !== "success" ? (
+                                <motion.div
+                                    key="movie-form"
+                                    animate={{
+                                        filter: isAnimating ? getBlurAmount() : "blur(0px)",
+                                        y: animationPhase === "swiping" ? 800 : 0,
+                                        opacity: animationPhase === "swiping" ? 0 : 1,
+                                    }}
+                                    transition={{ y: { duration: 0.6, ease: [0.45, 0, 0.55, 1] } }}
+                                    className="space-y-4 flex-1 flex flex-col"
+                                >
+                                    <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col">
+                                        <div className="space-y-4 flex-1">
+                                            <div className="space-y-1">
+                                                <Label htmlFor="movie-name">Име</Label>
+                                                <Input ref={nameInputRef} id="movie-name" name="name" required placeholder="Вашето име" className="bg-white/5 border-white/10 h-11" disabled={isAnimating} />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label htmlFor="movie-email">Имейл</Label>
+                                                <Input id="movie-email" name="email" type="email" required placeholder="email@example.com" className="bg-white/5 border-white/10 h-11" disabled={isAnimating} />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label htmlFor="movie-phone">Телефон</Label>
+                                                <Input id="movie-phone" name="phone" type="tel" required placeholder="+359 ..." className="bg-white/5 border-white/10 h-11" disabled={isAnimating} />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label>Тип на запитването <span className="text-white/20 normal-case">(по желание)</span></Label>
+                                                <input type="hidden" name="inquiry_type" value={selectedInquiry} />
+                                                <Combobox
+                                                    value={selectedInquiry}
+                                                    onValueChange={(val) => setSelectedInquiry(val as string)}
+                                                    disabled={isAnimating}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder="Изберете тип запитване"
+                                                        className="h-11 border-white/10 bg-white/5 w-full text-sm"
+                                                    />
+                                                    <ComboboxContent className="bg-zinc-900 border-white/10">
+                                                        <ComboboxList>
+                                                            {inquiryTypes.map((type) => (
+                                                                <ComboboxItem key={type.value} value={type.label}>{type.label}</ComboboxItem>
+                                                            ))}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label htmlFor="movie-message">Съобщение</Label>
+                                                <Textarea id="movie-message" name="message" required placeholder="Вашето съобщение..." className="bg-white/5 border-white/10 min-h-[140px]" disabled={isAnimating} />
+                                            </div>
+                                        </div>
+                                        <div className="pt-4">
+                                            <Button
+                                                type="submit"
+                                                disabled={isAnimating}
+                                                className="w-full relative group/btn bg-white text-black hover:bg-white/90 font-black uppercase tracking-tighter h-14 text-lg overflow-hidden transition-all duration-300 active:scale-[0.98]"
+                                            >
+                                                <span className="relative z-10 flex items-center justify-center gap-2">
+                                                    {isAnimating ? <><Loader2 className="w-5 h-5 animate-spin" /> Изпращане...</> : "Изпрати запитване"}
+                                                </span>
+                                            </Button>
+                                        </div>
+                                    </form>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="movie-success"
+                                    initial={{ y: -600, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ y: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }}
+                                    className="flex-1 flex flex-col"
+                                >
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center space-y-10">
+                                        <Logo variant="logomark" size="lg" className="mx-auto" />
+
+                                        <div className="space-y-6">
+                                            <h3 className="text-4xl font-black text-white uppercase tracking-tighter">
+                                                БЛАГОДАРИМ ВИ!
+                                            </h3>
+                                            <p className="text-xl text-white/80 font-light max-w-xs mx-auto leading-relaxed">
+                                                Вашето съобщение е изпратено успешно. <br />
+                                                Ще се свържем с Вас в най-скоро време!
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4">
+                                        <Button
+                                            type="button"
+                                            onClick={resetForm}
+                                            className="w-full relative group/btn bg-white text-black hover:bg-white/90 font-black uppercase tracking-tighter h-14 text-lg overflow-hidden transition-all duration-300 active:scale-[0.98]"
+                                        >
+                                            <span className="relative z-10">Благодаря</span>
+                                        </Button>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    <motion.div
+                        className="absolute inset-0 pointer-events-none z-30 opacity-[0.03]"
+                        animate={{ opacity: showFilmSides ? 0.05 : 0 }}
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                        }}
+                    />
                 </motion.div>
             </div>
         </section>

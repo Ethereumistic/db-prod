@@ -27,7 +27,7 @@ export function Footer() {
     return (
         <footer className="bg-black border-t border-white/5 pt-16 pb-8">
             <div className="container max-w-7xl mx-auto px-4">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 mb-16 lg:pl-8 pl-0">
+                <div className="grid grid-cols-1 lg:grid-cols-14 gap-16 lg:gap-8 mb-16 lg:pl-8 pl-0">
                     {/* Left Side: Logo */}
                     <div className="lg:col-span-5 flex flex-col items-center lg:items-start space-y-8">
                         <Link
@@ -57,7 +57,7 @@ export function Footer() {
                     </div>
 
                     {/* Right Side: Contact & Links */}
-                    <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-8">
+                    <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-8">
                         {/* Quick Links */}
                         <div className="space-y-6 text-center md:text-left md:pl-12">
                             <h3 className="text-white font-bold tracking-tight text-lg">Бързи връзки</h3>
@@ -78,8 +78,8 @@ export function Footer() {
 
                         {/* Contact Info */}
                         <div className="space-y-8 text-center md:text-left">
-                            <div className="space-y-4">
-                                <h3 className="text-white font-bold tracking-tight text-lg">Свържете се с нас</h3>
+                            <div className="space-y-4 flex flex-col items-center">
+                                <h3 className="text-white text-center font-bold tracking-tight text-lg">Свържете се с нас</h3>
                                 <div className="relative group/nav inline-block p-4 mx-auto md:mx-0">
                                     <CornerBorders />
                                     <a
@@ -92,12 +92,12 @@ export function Footer() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-6 lg:gap-8 pt-4">
+                            <div className="grid grid-cols-2 gap-6 lg:gap-2 pt-4 ">
 
                                 <div className=" relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
                                     <CornerBorders />
-                                    <div className="relative z-10 flex items-center gap-4 text-left">
-                                        <Avatar size="xl" className="border border-white/10 group-hover/nav:border-white/20 transition-colors duration-300">
+                                    <div className="relative z-10 flex-row  items-center gap-4 text-left">
+                                        <Avatar size="2x" className="border translate-x-[30%] border-white/10 group-hover/nav:border-white/20 transition-colors duration-300">
                                             <AvatarImage
                                                 src="https://cdn.jsdelivr.net/gh/Ethereumistic/db-prod-assets/about/dido.png"
                                                 alt="Дилян Калчев"
@@ -106,22 +106,22 @@ export function Footer() {
                                             <AvatarFallback className="text-[10px]">ДК</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p className="text-white font-medium whitespace-nowrap">Дилян Калчев</p>
+                                            <p className="text-center text-white font-medium whitespace-nowrap">Дилян Калчев</p>
                                             <a
                                                 href="tel:+359877611162"
                                                 className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
                                             >
-                                                <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                                {/* <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" /> */}
                                                 +359 877 611 162
                                             </a>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className=" relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0">
+                                <div className=" relative group/nav p-4 min-w-fit w-fit mx-auto md:mx-0 ">
                                     <CornerBorders />
-                                    <div className="relative z-10 flex items-center gap-4 text-left">
-                                        <Avatar size="xl" className="border border-white/10 group-hover/nav:border-white/20 transition-colors duration-300">
+                                    <div className="relative z-10 flex-row items-center gap-4 text-left">
+                                        <Avatar size="2x" className="border translate-x-[35%] border-white/10 group-hover/nav:border-white/20 transition-colors duration-300">
                                             <AvatarImage
                                                 src="https://cdn.jsdelivr.net/gh/Ethereumistic/db-prod-assets/about/dani.png"
                                                 alt="Даниел Ненов"
@@ -129,13 +129,13 @@ export function Footer() {
                                             />
                                             <AvatarFallback className="text-[10px]">ДН</AvatarFallback>
                                         </Avatar>
-                                        <div>
-                                            <p className="text-white font-medium whitespace-nowrap">Даниел Ненов</p>
+                                        <div className="">
+                                            <p className="text-white text-center font-medium whitespace-nowrap">Даниел Ненов</p>
                                             <a
                                                 href="tel:+359882664006"
                                                 className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
                                             >
-                                                <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" />
+                                                {/* <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" /> */}
                                                 +359 882 664 006
                                             </a>
                                         </div>
@@ -149,7 +149,13 @@ export function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-foreground/60 text-xs tracking-widest group">
-                    <p>© {new Date().getFullYear()} db PRODUCTIONS. ВСИЧКИ ПРАВА ЗАПАЗЕНИ.</p>
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                        <p>© {new Date().getFullYear()} db PRODUCTIONS. ВСИЧКИ ПРАВА ЗАПАЗЕНИ.</p>
+                        <div className="flex gap-4 md:gap-6">
+                            <Link href="/privacy-policy" className="hover:text-white transition-colors">ПОЛИТИКА ЗА ПОВЕРИТЕЛНОСТ</Link>
+                            <Link href="/terms-and-conditions" className="hover:text-white transition-colors">ОБЩИ УСЛОВИЯ</Link>
+                        </div>
+                    </div>
                     <Link href="https://echoray.io" target="_blank" className="group"><p className="text-foreground/60">СЪЗДАДЕНО С ПРЕЦИЗНОСТ | <span className="text-foreground/60 transition-colors group-hover:text-foreground">ECHORAY.IO</span></p></Link>
                 </div>
             </div>

@@ -1,9 +1,11 @@
 import { defineField, defineType } from 'sanity';
+import { Video } from 'lucide-react';
 
 export const service = defineType({
     name: 'service',
-    title: 'Services',
+    title: 'УСЛУГИ',
     type: 'document',
+    icon: Video,
     fields: [
         defineField({
             name: 'title',

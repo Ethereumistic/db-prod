@@ -7,11 +7,74 @@ import { Portfolio2 } from "@/components/sections/portfolio2";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { getVideoData } from "@/lib/utils/video";
+import type { Metadata } from "next";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { WorkGallery } from "@/components/portfolio/work-gallery";
 
 import { BackButton } from "@/components/ui/back-button";
+import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
+import { BreadcrumbSchema } from "@/components/seo/structured-data";
+
+const BASE_URL = 'https://dbproductions.net';
+
+// Fetch category for metadata
+async function getCategoryMeta(slug: string) {
+    return client.fetch(
+        `*[_type == "projectCategory" && slug.current == $slug][0]{
+            title,
+            description,
+            media { asset, externalUrl }
+        }`,
+        { slug }
+    );
+}
+
+// Generate dynamic metadata for each category page
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const category = await getCategoryMeta(slug);
+
+    if (!category) {
+        return {
+            title: "Категория не е намерена",
+        };
+    }
+
+    const title = `${category.title} | Портфолио`;
+    const description = category.description || `Разгледайте нашите ${category.title.toLowerCase()} проекти. Професионална видео продукция от db Productions в България.`;
+
+    // Get OG image from category media
+    let ogImage = "/android-chrome-512x512.png";
+    if (category.media?.asset) {
+        ogImage = urlFor(category.media.asset).width(1200).height(630).url();
+    } else if (category.media?.externalUrl) {
+        ogImage = category.media.externalUrl;
+    }
+
+    return {
+        title,
+        description,
+        alternates: {
+            canonical: `${BASE_URL}/${slug}`,
+        },
+        openGraph: {
+            title: `${category.title} | db Productions`,
+            description,
+            url: `${BASE_URL}/${slug}`,
+            siteName: "db Productions",
+            images: [{ url: ogImage, width: 1200, height: 630, alt: category.title }],
+            locale: "bg_BG",
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${category.title} | db Productions`,
+            description,
+            images: [ogImage],
+        },
+    };
+}
 
 async function getCategory(slug: string) {
     return client.fetch(
@@ -42,14 +105,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     const { categoryType, projects, title } = category;
 
     return (
-        <main className="bg-black min-h-screen pt-48 pb-24 text-white">
+        <main className="bg-black min-h-screen py-28 text-white">
             <div className="container mx-auto px-4">
-                <BackButton href="/#work" />
-                <div className="flex flex-col items-center mb-16 text-center space-y-4">
-                    <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter">
-                        {title}
-                    </h1>
-                    <div className="w-24 h-1 bg-white/20" />
+                <div className="relative flex items-center justify-center mb-16 min-h-[60px] md:min-h-[100px]">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                        <BackButton href="/#work" />
+                    </div>
+                    <div className="flex flex-col items-center text-center space-y-4 px-12 md:px-0">
+                        <h1 className="text-4xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none">
+                            {title}
+                        </h1>
+                        <div className="w-24 h-1 bg-white/20" />
+                    </div>
                 </div>
 
                 {categoryType === 'solo' ? (
@@ -213,7 +280,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                             >
                                 <WorkCard
                                     project={project}
-                                    baseUrl={`/work/${slug}`}
+                                    baseUrl={`/${slug}`}
                                 />
                             </div>
                         ))}
@@ -226,6 +293,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     </div>
                 )}
             </div>
+            <ScrollToTopButton />
         </main>
     );
 }

@@ -10,7 +10,7 @@ const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-05-03';
 export default defineConfig({
     basePath: '/studio',
     name: 'default',
-    title: 'Digital Agency Studio',
+    title: 'db Productions АДМИН ПАНЕЛ',
     projectId,
     dataset,
     schema: {

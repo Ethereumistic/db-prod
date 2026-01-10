@@ -67,16 +67,23 @@ export function Navbar() {
 
     return (
         <header className={cn(
-            "fixed top-0 left-0 right-0 transition-all duration-500 ease-in-out z-100",
+            "fixed top-0 left-0 right-0 transition-all duration-500 ease-in-out z-100 pointer-events-none",
             scrolled ? "py-2" : "py-6"
         )}>
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 pointer-events-auto">
                 <nav className={cn(
                     "flex items-center justify-between border border-white/10 transition-all duration-500 ease-in-out px-6 py-2 backdrop-blur-xl shadow-2xl",
                     scrolled ? "bg-black/20 scale-[0.98]" : "bg-black/20"
                 )}>
                     {/* Logo Section */}
-                    <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+                    <Link
+                        href="/"
+                        onClick={(e) => {
+                            handleAnchorClick(e, "/");
+                            setCurrentHash("");
+                        }}
+                        className="flex items-center hover:opacity-80 transition-opacity"
+                    >
                         <Logo
                             size="sm"
                             variant="logo"
@@ -122,7 +129,14 @@ export function Navbar() {
                             </NavigationMenuList>
                         </NavigationMenu>
 
-                        <Link href="/#contact" className="bg-white py-2 text-black hover:bg-white/90 font-medium px-6 transition-all hover:scale-105 active:scale-95">
+                        <Link
+                            href="/#contact"
+                            onClick={(e) => {
+                                handleAnchorClick(e, "/#contact");
+                                setCurrentHash("#contact");
+                            }}
+                            className="bg-white py-2 text-black hover:bg-white/90 font-medium px-6 transition-all hover:scale-105 active:scale-95"
+                        >
                             Контакти
                         </Link>
                     </div>
@@ -213,9 +227,18 @@ export function Navbar() {
 
                                     <div className="w-full max-w-xs">
                                         <SheetClose render={
-                                            <Button className="w-full bg-white text-black hover:bg-white/90 font-bold py-8 text-xl transition-all hover:scale-[1.02] active:scale-95">
-                                                Резервирай
-                                            </Button>
+                                            <Link
+                                                href="/#contact"
+                                                onClick={(e) => {
+                                                    handleAnchorClick(e, "/#contact");
+                                                    setCurrentHash("#contact");
+                                                }}
+                                                className="w-full"
+                                            >
+                                                <Button className="w-full bg-white text-black hover:bg-white/90 font-bold py-8 text-xl transition-all hover:scale-[1.02] active:scale-95">
+                                                    Резервирай
+                                                </Button>
+                                            </Link>
                                         } />
                                     </div>
                                 </div>

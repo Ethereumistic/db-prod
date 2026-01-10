@@ -37,7 +37,7 @@ export function ServicesCDN({ services }: ServicesProps) {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase "
+                        className="text-4xl md:text-6xl font-black tracking-wider text-white uppercase "
                     >
                         НАШИТЕ <span className=" text-transparent bg-clip-text  bg-linear-to-r from-white via-white/50 to-white/20">УСЛУГИ</span>
                     </motion.h2>
@@ -54,8 +54,7 @@ export function ServicesCDN({ services }: ServicesProps) {
                         transition={{ delay: 0.3 }}
                         viewport={{ once: true }}
                         className="text-white/40 max-w-2xl text-lg font-light"
-                    >
-                        Цялостни творчески решения – от първоначалната концепция до финалния резултат.
+                    >Правим видеа с послание, защото истинският успех идва от съдържание със смисъл
                     </motion.p>
                 </div>
 
@@ -122,12 +121,19 @@ export function ServicesCDN({ services }: ServicesProps) {
                             </motion.div>
                         );
 
-                        const filterSlug = service.slug?.current || (service.title.toLowerCase().includes("video") ? "video" : "social-media");
-
                         return (
                             <Link
                                 key={service._id}
-                                href={`/?service=${filterSlug}#portfolio`}
+                                href="#work"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const element = document.getElementById("work");
+                                    if (element) {
+                                        element.scrollIntoView({ behavior: "smooth" });
+                                        // Update URL hash without jumping
+                                        window.history.pushState(null, "", "#work");
+                                    }
+                                }}
                             >
                                 {Content}
                             </Link>

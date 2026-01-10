@@ -30,7 +30,8 @@ export function CornerBorders({
                                     groupName === "dropdown-item" ? "group-hover/dropdown-item:opacity-100 group-hover/dropdown-item:translate-x-0 group-hover/dropdown-item:translate-y-0 focus-visible:opacity-100 focus-visible:translate-x-0 focus-visible:translate-y-0" :
                                         groupName === "combobox-item" ? "group-hover/combobox-item:opacity-100 group-hover/combobox-item:translate-x-0 group-hover/combobox-item:translate-y-0 group-focus/combobox-item:opacity-100 group-focus/combobox-item:translate-x-0 group-focus/combobox-item:translate-y-0" :
                                             groupName === "back" ? "group-hover/back:opacity-100 group-hover/back:translate-x-0 group-hover/back:translate-y-0" :
-                                                "group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
+                                                groupName === "scroll" ? "group-hover/scroll:opacity-100 group-hover/scroll:translate-x-0 group-hover/scroll:translate-y-0" :
+                                                    "group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
                     ),
                 cornerClassName
             )} />
@@ -47,7 +48,8 @@ export function CornerBorders({
                                     groupName === "dropdown-item" ? "group-hover/dropdown-item:opacity-100 group-hover/dropdown-item:translate-x-0 group-hover/dropdown-item:translate-y-0 focus-visible:opacity-100 focus-visible:translate-x-0 focus-visible:translate-y-0" :
                                         groupName === "combobox-item" ? "group-hover/combobox-item:opacity-100 group-hover/combobox-item:translate-x-0 group-hover/combobox-item:translate-y-0 group-focus/combobox-item:opacity-100 group-focus/combobox-item:translate-x-0 group-focus/combobox-item:translate-y-0" :
                                             groupName === "back" ? "group-hover/back:opacity-100 group-hover/back:translate-x-0 group-hover/back:translate-y-0" :
-                                                "group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
+                                                groupName === "scroll" ? "group-hover/scroll:opacity-100 group-hover/scroll:translate-x-0 group-hover/scroll:translate-y-0" :
+                                                    "group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
                     ),
                 cornerClassName
             )} />

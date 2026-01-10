@@ -8,14 +8,15 @@ import { CornerBorders } from "./corner-borders";
 
 interface BackButtonProps {
     href: string;
+    className?: string;
 }
 
-export function BackButton({ href }: BackButtonProps) {
+export function BackButton({ href, className }: BackButtonProps) {
     return (
         <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="mb-12"
+            className={className}
         >
             <Link
                 href={href}

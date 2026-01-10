@@ -3,7 +3,7 @@ import { Briefcase } from 'lucide-react';
 
 export const work = defineType({
     name: 'work',
-    title: 'Work / Prototype',
+    title: 'ПОРТФОЛИО',
     type: 'document',
     icon: Briefcase,
     fields: [
