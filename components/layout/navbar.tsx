@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
@@ -30,9 +30,8 @@ import { CornerBorders } from "@/components/ui/corner-borders";
 const navItems = [
     // { title: "Начало", href: "/" },
     { title: "Услуги", href: "/#services" },
-    { title: "Портфолио", href: "/#portfolio" },
+    { title: "Портфолио", href: "/#work" },
     { title: "За нас", href: "/#about" },
-    { title: "Контакт", href: "/#contact" },
 ];
 
 export function Navbar() {
@@ -123,9 +122,9 @@ export function Navbar() {
                             </NavigationMenuList>
                         </NavigationMenu>
 
-                        <Button className="bg-white text-black hover:bg-white/90 font-medium px-6 transition-all hover:scale-105 active:scale-95">
-                            Започни проект
-                        </Button>
+                        <Link href="/#contact" className="bg-white py-2 text-black hover:bg-white/90 font-medium px-6 transition-all hover:scale-105 active:scale-95">
+                            Контакти
+                        </Link>
                     </div>
 
                     {/* Mobile Navigation */}
@@ -224,6 +223,8 @@ export function Navbar() {
                         </Sheet>
                     </div>
                 </nav>
+
+                {/* Sub-navbar Back Button removed from here and moved to individual pages */}
             </div>
         </header>
     );

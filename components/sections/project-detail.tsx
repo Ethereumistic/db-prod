@@ -68,19 +68,19 @@ function SmoothSummarySection({
         >
             <div ref={contentRef} className="space-y-8">
                 <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                        key={activeVideoIndex}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                        className="space-y-8"
-                    >
-                        <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/30 border-b border-white/5 pb-4 pr-20">
-                            {activeTitle}
-                        </h4>
+                    {activeSummary?.trim() && (
+                        <motion.div
+                            key={activeVideoIndex}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            className="space-y-8"
+                        >
+                            <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/30 border-b border-white/5 pb-4 pr-20">
+                                {activeTitle}
+                            </h4>
 
-                        {activeSummary && (
                             <div className="relative group/nav p-6 bg-white/2 hover:bg-white/5 transition-all">
                                 <CornerBorders isActive={false} groupName="nav" />
                                 <div className="relative overflow-hidden">
@@ -92,8 +92,8 @@ function SmoothSummarySection({
                                     </p>
                                 </div>
                             </div>
-                        )}
-                    </motion.div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
             </div>
         </motion.div>
@@ -186,18 +186,57 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
 
     const imageSrc = getImageUrl(project.featuredImage) || getImageUrl(project.mainImage) || "/placeholder.jpg";
 
-    const getEmbedUrl = (url: string) => {
+    const getVideoData = (url: string) => {
         if (!url) return null;
+
+        // YouTube
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
-            const id = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-            return `https://www.youtube.com/embed/${id}?vq=hd1080`;
+            const isShort = url.includes('/shorts/');
+            const id = isShort
+                ? url.split('/shorts/')[1]?.split('?')[0]
+                : (url.split('v=')[1]?.split('&')[0] || url.split('/').pop());
+
+            return {
+                embedUrl: `https://www.youtube.com/embed/${id}${isShort ? '' : '?vq=hd1080'}`,
+                isVertical: isShort
+            };
         }
+
+        // Vimeo
         if (url.includes('vimeo.com')) {
             const id = url.split('/').pop();
-            return `https://player.vimeo.com/video/${id}`;
+            return {
+                embedUrl: `https://player.vimeo.com/video/${id}`,
+                isVertical: false
+            };
         }
+
+        // TikTok
+        if (url.includes('tiktok.com')) {
+            const id = url.match(/\/video\/(\d+)/)?.[1];
+            if (id) {
+                return {
+                    embedUrl: `https://www.tiktok.com/embed/v2/${id}`,
+                    isVertical: true
+                };
+            }
+        }
+
+        // Instagram
+        if (url.includes('instagram.com')) {
+            const id = url.match(/\/(?:p|reels|reel)\/([A-Za-z0-9_-]+)/)?.[1];
+            if (id) {
+                return {
+                    embedUrl: `https://www.instagram.com/p/${id}/embed`,
+                    isVertical: url.includes('/reels/') || url.includes('/reel/')
+                };
+            }
+        }
+
         return null;
     };
+
+    const mainVideoData = getVideoData(project.videoUrl);
 
     const [activeVideoIndex, setActiveVideoIndex] = useState<number>(-1); // -1 for main video
     const containerRef = useRef<HTMLDivElement>(null);
@@ -262,7 +301,7 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
 
     const activeSummary = activeVideoIndex === -1
         ? project.summary
-        : (project.additionalVideos?.[activeVideoIndex]?.summary || project.summary);
+        : project.additionalVideos?.[activeVideoIndex]?.summary;
 
     const activeTitle = activeVideoIndex === -1
         ? "Основни Детайли"
@@ -311,12 +350,13 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="relative aspect-video overflow-hidden border border-white/10 bg-slate-900 group"
+                                className={`relative overflow-hidden border border-white/10 bg-slate-900 group ${mainVideoData?.isVertical ? "aspect-9/16 max-w-[400px] mx-auto" : "aspect-video"
+                                    }`}
                             >
-                                {getEmbedUrl(project.videoUrl) ? (
+                                {mainVideoData ? (
                                     <div className="absolute inset-0 z-20">
                                         <iframe
-                                            src={getEmbedUrl(project.videoUrl) as string}
+                                            src={mainVideoData.embedUrl}
                                             title={project.title}
                                             className="w-full h-full border-0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -337,7 +377,7 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                             </motion.div>
 
                             {/* Mobile Project Summary Card - Visible only on mobile, below first video */}
-                            {project.summary && (
+                            {project.summary?.trim() && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -435,16 +475,17 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                             {vid.title || `Видео ${idx + 2}`}
                                         </h3>
                                     </div>
-                                    <div className="relative aspect-video overflow-hidden border border-white/5 bg-slate-900/50">
-                                        {getEmbedUrl(vid.url) ? (
+                                    <div className={`relative overflow-hidden border border-white/5 bg-slate-900/50 ${getVideoData(vid.url)?.isVertical ? "aspect-9/16 max-w-[400px] mx-auto" : "aspect-video"
+                                        }`}>
+                                        {getVideoData(vid.url) ? (
                                             <iframe
-                                                src={getEmbedUrl(vid.url) as string}
+                                                src={getVideoData(vid.url)?.embedUrl}
                                                 title={vid.title}
                                                 className="w-full h-full border-0"
                                                 allowFullScreen
                                             ></iframe>
                                         ) : (
-                                            <div className="flex items-center justify-center h-full">
+                                            <div className="flex items-center justify-center h-full aspect-video">
                                                 <a href={vid.url} target="_blank" rel="noreferrer" className="text-white/40 hover:text-white underline underline-offset-4 font-black tracking-widest uppercase text-[10px]">
                                                     ВРЪЗКА КЪМ ВИДЕО
                                                 </a>
@@ -453,7 +494,7 @@ export function ProjectDetail({ project, relatedProjects, categories }: ProjectD
                                     </div>
 
                                     {/* Video Summary Card (Visible only on Mobile, hidden on Desktop as requested) */}
-                                    {vid.summary && (
+                                    {vid.summary?.trim() && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 20 }}
                                             whileInView={{ opacity: 1, y: 0 }}

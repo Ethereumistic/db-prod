@@ -278,7 +278,7 @@ function PortfolioContent({ projects, categories, services }: PortfolioProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-8 right-8 z-[100]"
+                        className="fixed bottom-8 right-8 z-100"
                     >
                         <button
                             onClick={scrollToPortfolio}

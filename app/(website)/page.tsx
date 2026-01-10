@@ -7,6 +7,7 @@ import { Portfolio } from "@/components/sections/portfolio";
 import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
 import { ContactTest } from "@/components/sections/contact-test";
+import { Portfolio2 } from "@/components/sections/portfolio2";
 
 export default async function Home() {
     const [services, categories, projects] = await Promise.all([
@@ -20,6 +21,7 @@ export default async function Home() {
             <Hero />
             <ServicesCDN services={services} />
             <Portfolio projects={projects} categories={categories} services={services} />
+            <Portfolio2 projects={projects} categories={categories} services={services} />
             <Partners />
             <About />
             <Contact />

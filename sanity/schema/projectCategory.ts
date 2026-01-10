@@ -52,6 +52,21 @@ export const projectCategory = defineType({
             validation: (Rule) => Rule.required(),
         }),
         defineField({
+            name: 'categoryType',
+            title: 'Category Layout Type',
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'Solo (Show content directly on category page)', value: 'solo' },
+                    { title: 'Multi (Show project cards with sub-routing)', value: 'multi' }
+                ],
+                layout: 'radio'
+            },
+            initialValue: 'solo',
+            validation: (Rule) => Rule.required(),
+            description: 'SOLO: Leads to /work/[slug] showing contents. MULTI: Leads to /work/[slug] showing cards linking to /work/[slug]/[projectSlug].',
+        }),
+        defineField({
             name: 'description',
             title: 'Description',
             type: 'text',

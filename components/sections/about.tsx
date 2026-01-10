@@ -13,13 +13,13 @@ const owners = [
     {
         name: "Даниел Ненов",
         role: "Режисьор, Сценарист & Монтажист",
-        image: "dani.png",
+        image: "dani.jpg",
         description: "Даниел е творческият двигател на студиото с опит в продукции като „Игри на волята“ и „Hell’s Kitchen“. Неговата сила е в кинематографичното разказване и прецизния монтаж, фокусирайки се върху автентичността и емоцията.",
         socials: [
             { icon: Facebook, href: "https://www.facebook.com/daniel.nenov.52" },
             { icon: Instagram, href: "https://www.instagram.com/dnenov/" },
         ],
-        imageStyle: "object-cover object-top transition-transform duration-700 -mt-6 scale-100",
+        imageStyle: "object-cover object-center transition-transform duration-700 -translate-y-6 scale-100",
     },
     {
         name: "Дилян Калчев",
@@ -90,7 +90,7 @@ export function About() {
                                     alt={owner.name}
                                     fill
                                     className={cn(
-                                        "object-cover object-top transition-all duration-1000 grayscale group-hover:grayscale-0",
+                                        "object-cover object-top transition-all duration-1000 grayscale",
                                         owner.imageStyle,
                                         "group-hover:scale-105"
                                     )}

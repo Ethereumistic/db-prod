@@ -32,14 +32,14 @@ export function ServicesCDN({ services }: ServicesProps) {
         <section id="services" className="relative py-24 bg-black overflow-hidden -scroll-mt-3">
             <div className="container max-w-6xl mx-auto px-6 relative z-10">
                 {/* Header - Matches Portfolio Guidelines */}
-                <div className="flex flex-col items-center mb-8 text-center space-y-4">
+                <div className="flex flex-col items-center mb-8 text-center space-y-4 ">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase"
+                        className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase "
                     >
-                        НАШИТЕ <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-white/50 to-white/20">УСЛУГИ</span>
+                        НАШИТЕ <span className=" text-transparent bg-clip-text  bg-linear-to-r from-white via-white/50 to-white/20">УСЛУГИ</span>
                     </motion.h2>
                     <motion.div
                         initial={{ scaleX: 0 }}
@@ -107,7 +107,7 @@ export function ServicesCDN({ services }: ServicesProps) {
                                             <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter leading-tight transition-all duration-500">
                                                 {service.title}
                                             </h3>
-                                            <p className="text-white/40 text-sm md:text-base leading-relaxed max-w-md font-medium transition-colors duration-500 group-hover:text-white/80">
+                                            <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-md font-medium transition-colors duration-500 group-hover:text-white/80">
                                                 {service.description}
                                             </p>
                                         </div>
