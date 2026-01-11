@@ -47,7 +47,7 @@ const owners = [
         highlights: [
             { label: "Образование", value: "Coventry University (UK) – Кино и Телевизия" },
             { label: "Медиен опит", value: "Репортер в „Здравей, България“ (Нова ТВ)" },
-            { label: "Digital Impact", value: "40,000+ последователи в TikTok" }
+            { label: "Digital Impact", value: "65,000+ последователи в соц. мрежи" }
         ],
         socials: [
             { icon: Facebook, href: "https://www.facebook.com/didonkin" },
@@ -228,7 +228,7 @@ export function About() {
                                             <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black via-black/80 to-transparent md:hidden" />
                                             {/* Mobile Name Overlay - Positioned on the edge of the transition */}
                                             <div className="absolute bottom-6 left-8 md:hidden z-20">
-                                                <h2 className="text-6xl font-black text-white uppercase tracking-tighter leading-none whitespace-nowrap">
+                                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-none whitespace-nowrap">
                                                     {owner.name}
                                                 </h2>
                                             </div>
