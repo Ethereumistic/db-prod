@@ -32,6 +32,7 @@ const owners = [
         socials: [
             { icon: Facebook, href: "https://www.facebook.com/daniel.nenov.52" },
             { icon: Instagram, href: "https://www.instagram.com/dnenov/" },
+            { icon: Youtube, href: "https://www.youtube.com/@nenovideocreator" },
         ],
         imageStyle: "object-cover object-[50%_15%] transition-transform duration-700 ",
         imageStyleSheet: "object-cover object-[50%_0%] transition-transform duration-700",
