@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { urlFor } from "@/lib/sanity/image";
 import { cn } from "@/lib/utils";
 import { CornerBorders } from "@/components/ui/corner-borders";
@@ -15,13 +16,131 @@ interface ServiceData {
     icon: string;
     route?: string;
     image: {
-        asset?: any;
+        asset?: {
+            _id: string;
+            metadata?: {
+                palette?: {
+                    dominant?: {
+                        background?: string;
+                    };
+                };
+            };
+        };
         externalUrl?: string;
     };
 }
 
 interface ServicesProps {
     services: ServiceData[];
+}
+
+function ServiceCard({ service, index }: { service: ServiceData; index: number }) {
+    const cardRef = useRef(null);
+    const isInView = useInView(cardRef, {
+        once: false,
+        margin: "-48% 0px -48% 0px" // Extremely tight window to ensure only one triggers at a time
+    });
+
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    const imageSrc = service.image?.asset
+        ? urlFor(service.image.asset).url()
+        : (service.image?.externalUrl || "/placeholder.jpg");
+
+    const dominantColor = service.image?.asset?.metadata?.palette?.dominant?.background || "#ffffff";
+    const isActiveOnMobile = isMobile && isInView;
+
+    return (
+        <Link
+            href="#work"
+            onClick={(e) => {
+                e.preventDefault();
+                const element = document.getElementById("work");
+                if (element) {
+                    element.scrollIntoView({ behavior: "smooth" });
+                    window.history.pushState(null, "", "#work");
+                }
+            }}
+        >
+            <motion.div
+                ref={cardRef}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
+                viewport={{ once: true }}
+                className="group/service cursor-pointer relative"
+            >
+                {/* Image Container with CornerBorders */}
+                <div className={cn(
+                    "relative aspect-square mb-8 overflow-hidden border border-white/5 transition-all duration-700",
+                    "group-hover/service:border-white/10 group-hover/service:bg-white/2",
+                    isActiveOnMobile && "border-white/10 bg-white/2"
+                )}>
+                    {/* Main Card Corner Borders */}
+                    <CornerBorders
+                        groupName="service"
+                        className="z-20"
+                        cornerClassName="w-8 h-8"
+                        isActive={isActiveOnMobile}
+                        color={dominantColor}
+                    />
+
+                    <Image
+                        src={imageSrc}
+                        alt={service.title}
+                        fill
+                        className={cn(
+                            "object-contain p-8 md:p-12 transition-all duration-1000 ease-in-out",
+                            "grayscale brightness-150 contrast-125 opacity-60 group-hover/service:grayscale-0 group-hover/service:opacity-100 group-hover/service:brightness-100 group-hover/service:contrast-100 group-hover/service:scale-[1.02]",
+                            isActiveOnMobile && "grayscale-0 opacity-100 brightness-100 contrast-100 scale-[1.02]"
+                        )}
+                        priority={index < 2}
+                    />
+                </div>
+
+                {/* Text Content with Inner Borders */}
+                <div className="relative p-4 transition-all duration-500 w-fit max-w-full">
+                    <CornerBorders
+                        groupName="service"
+                        cornerClassName="w-4 h-4"
+                        isActive={isActiveOnMobile}
+                        color={dominantColor}
+                    />
+
+                    <div className="flex items-start gap-4 relative z-10">
+                        <span className={cn(
+                            "text-white/10 text-3xl md:text-4xl font-black tracking-tighter pt-1 transition-colors duration-500",
+                            "group-hover/service:text-white/30",
+                            isActiveOnMobile && "text-white/30"
+                        )}>
+                            {index + 1}.
+                        </span>
+                        <div className="space-y-2">
+                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-widest leading-tight transition-all duration-500">
+                                {service.title}
+                            </h3>
+                            <p className={cn(
+                                "text-white/40 text-sm md:text-lg leading-relaxed max-w-md font-medium transition-colors duration-500",
+                                "group-hover/service:text-white/80",
+                                isActiveOnMobile && "text-white/80"
+                            )}>
+                                {service.description}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </Link>
+    );
 }
 
 export function ServicesCDN({ services }: ServicesProps) {
@@ -60,81 +179,9 @@ export function ServicesCDN({ services }: ServicesProps) {
 
                 {/* Services Grid - Reduced Gap */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 max-w-5xl mx-auto">
-                    {displayServices.map((service, index) => {
-                        const imageSrc = service.image?.asset
-                            ? urlFor(service.image.asset).url()
-                            : (service.image?.externalUrl || "/placeholder.jpg");
-
-                        const Content = (
-                            <motion.div
-                                initial={{ opacity: 0, y: 40 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
-                                viewport={{ once: true }}
-                                className="group cursor-pointer relative"
-                            >
-                                {/* Image Container with CornerBorders */}
-                                <div className="relative aspect-square mb-8 overflow-hidden border border-white/5 transition-all duration-700 group-hover:border-white/10 group-hover:bg-white/2">
-                                    <CornerBorders
-                                        groupName="service"
-                                        className="z-20"
-                                        cornerClassName="w-8 h-8 group-hover/service:border-white"
-                                    />
-
-                                    <Image
-                                        src={imageSrc}
-                                        alt={service.title}
-                                        fill
-                                        className={cn(
-                                            "object-contain p-8 md:p-12 transition-all duration-1000 ease-in-out",
-                                            "grayscale brightness-150 contrast-125 opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-100 group-hover:contrast-100 group-hover:scale-[1.02]"
-                                        )}
-                                        priority={index < 2}
-                                    />
-
-                                    {/* Bottom Decorative Line */}
-                                    {/* <div className="absolute bottom-0 left-0 h-px bg-white/30 w-0 group-hover:w-full transition-all duration-700 ease-in-out" /> */}
-                                </div>
-
-                                {/* Text Content */}
-                                <div className="space-y-4">
-                                    <div className="flex items-start gap-4">
-                                        <span className="text-white/10 text-3xl md:text-4xl font-black tracking-tighter pt-1 transition-colors duration-500 group-hover:text-white/30">
-                                            {index + 1}.
-                                        </span>
-                                        <div className="space-y-2">
-                                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-widest leading-tight transition-all duration-500">
-                                                {service.title}
-                                            </h3>
-                                            <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-md font-medium transition-colors duration-500 group-hover:text-white/80">
-                                                {service.description}
-                                            </p>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </motion.div>
-                        );
-
-                        return (
-                            <Link
-                                key={service._id}
-                                href="#work"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const element = document.getElementById("work");
-                                    if (element) {
-                                        element.scrollIntoView({ behavior: "smooth" });
-                                        // Update URL hash without jumping
-                                        window.history.pushState(null, "", "#work");
-                                    }
-                                }}
-                            >
-                                {Content}
-                            </Link>
-                        );
-                    })}
+                    {displayServices.map((service, index) => (
+                        <ServiceCard key={service._id} service={service} index={index} />
+                    ))}
                 </div>
             </div>
         </section>

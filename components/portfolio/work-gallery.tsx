@@ -114,14 +114,14 @@ export function WorkGallery({ images, title }: WorkGalleryProps) {
     return (
         <div className="space-y-6">
             <Card className="bg-slate-900/50 border-white/5 rounded-none overflow-hidden">
-                <CardContent className="p-8 space-y-12">
+                <CardContent className="p-4 sm:p-6 md:p-8 space-y-8 md:space-y-12">
                     {title && (
                         <div className="flex items-center gap-4">
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">{title}</h2>
+                            <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tight">{title}</h2>
                         </div>
                     )}
 
-                    <div className="grid grid-cols-12 gap-4">
+                    <div className="grid grid-cols-12 gap-3 md:gap-4">
                         {visibleImages.map((img: any, idx: number) => {
                             const src = img.asset ? urlFor(img.asset).url() : img.externalUrl;
                             const isLastVisible = idx === 11 && remainingCount > 0;

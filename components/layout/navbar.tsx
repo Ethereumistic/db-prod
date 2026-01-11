@@ -236,7 +236,7 @@ export function Navbar() {
                                                 className="w-full"
                                             >
                                                 <Button className="w-full bg-white text-black hover:bg-white/90 font-bold py-8 text-xl transition-all hover:scale-[1.02] active:scale-95">
-                                                    Резервирай
+                                                    СВЪРЖИ СЕ С НАС
                                                 </Button>
                                             </Link>
                                         } />

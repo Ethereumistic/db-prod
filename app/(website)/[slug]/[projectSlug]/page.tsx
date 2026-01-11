@@ -113,7 +113,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     const videoData = firstVideoUrl ? getVideoData(firstVideoUrl) : null;
 
     return (
-        <main className="bg-black min-h-screen py-28 text-white">
+        <main className="bg-black min-h-screen py-16 md:py-28 text-white">
             {/* Breadcrumb Schema for SEO */}
             <BreadcrumbSchema items={[
                 { name: 'Начало', url: BASE_URL },
@@ -132,37 +132,40 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 />
             )}
 
-            <div className="container mx-auto px-4">
-                <div className="relative flex items-center justify-center mb-16 min-h-[60px] md:min-h-[100px]">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2">
+            <div className="container mx-auto px-4 mt-8 md:mt-0 mb-12 md:mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-[80px_1fr_80px] lg:grid-cols-[120px_1fr_120px] items-center gap-8 md:gap-4">
+                    <div className="flex justify-start">
                         <BackButton href={`/${slug}`} />
                     </div>
-                    <div className="flex flex-col items-center text-center space-y-2 md:space-y-4 px-12 md:px-0">
+
+                    <div className="flex flex-col items-center text-center space-y-3 md:space-y-6 max-w-4xl mx-auto">
                         {category?.title && (
                             <p className="text-white/40 uppercase tracking-[0.3em] font-black text-[10px] md:text-sm">
                                 {category.title}
                             </p>
                         )}
-                        <h1 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9]">
                             {title}
                         </h1>
-                        <div className="w-24 h-1 bg-white/20" />
+                        <div className="w-16 mb-8 md:w-32 h-1 bg-white/20" />
                     </div>
+
+                    <div className="hidden md:block" aria-hidden="true" />
                 </div>
 
                 <div className="max-w-5xl mx-auto">
                     {/* Media Section (Hero + Videos) */}
-                    <div className="space-y-32 mb-24">
+                    <div className="space-y-16 md:space-y-32 mb-16 md:mb-24">
                         {/* Hero Thumbnail (Image or Video) */}
                         {heroThumbnail && (heroThumbnail.videoUrl || heroThumbnail.image) && (
                             <Card className="bg-slate-900/50 border-white/5 rounded-none overflow-hidden">
-                                <CardContent className="p-8 space-y-12">
+                                <CardContent className="p-4 sm:p-6 md:p-8 space-y-8 md:space-y-12">
                                     {heroThumbnail.videoUrl ? (
                                         <div className="space-y-12">
                                             {/* Header Info for Hero Video */}
                                             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                                                 <div className="space-y-1">
-                                                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+                                                    <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tight">
                                                         {title}
                                                     </h2>
                                                 </div>
@@ -211,7 +214,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                             const videoUrls = video.urls || [video.url]; // Backward compatibility if needed, but schema now uses urls
                             return (
                                 <Card key={idx} className="bg-slate-900/50 border-white/5 rounded-none overflow-hidden">
-                                    <CardContent className="p-8 space-y-12">
+                                    <CardContent className="p-4 sm:p-6 md:p-8 space-y-8 md:space-y-12">
                                         {/* Header Info Above Video */}
                                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                                             <div className="space-y-1">
@@ -220,7 +223,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                                                         {new Date(video.date).toLocaleDateString()}
                                                     </p>
                                                 )}
-                                                <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+                                                <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tight">
                                                     {video.title || title}
                                                 </h2>
                                             </div>
@@ -271,7 +274,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
                                         {/* Description Below Video */}
                                         {video.description && (
-                                            <p className="text-xl font-light text-white/60 leading-relaxed max-w-3xl">
+                                            <p className="text-lg md:text-xl font-light text-white/60 leading-relaxed max-w-3xl">
                                                 {video.description}
                                             </p>
                                         )}
@@ -292,7 +295,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
                     {/* Top-Level Project Galleries */}
                     {galleries && galleries.length > 0 && (
-                        <div className="space-y-24 mt-24">
+                        <div className="space-y-16 md:space-y-24 mt-16 md:mt-24">
                             {galleries.map((gallery: any, gIdx: number) => (
                                 <WorkGallery
                                     key={gIdx}
@@ -305,6 +308,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </div>
             </div>
             <ScrollToTopButton />
-        </main>
+        </main >
     );
 }

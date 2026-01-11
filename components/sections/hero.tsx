@@ -15,6 +15,7 @@ export function Hero() {
     const [progress, setProgress] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
+    const isDraggingRef = useRef(false);
     const videoRef = useRef<HTMLVideoElement>(null);
 
     // Sync state with video element
@@ -23,13 +24,19 @@ export function Hero() {
         if (!video) return;
 
         const handleTimeUpdate = () => {
-            if (!isDragging) {
+            if (!isDraggingRef.current && video.duration) {
                 setProgress(video.currentTime);
+                // Safari fix: If duration was 0, update it now that we're playing
+                if (duration === 0 && video.duration > 0) {
+                    setDuration(video.duration);
+                }
             }
         };
 
         const handleDurationChange = () => {
-            setDuration(video.duration);
+            if (video.duration && !isNaN(video.duration)) {
+                setDuration(video.duration);
+            }
         };
 
         const handlePlay = () => setIsPlaying(true);
@@ -68,6 +75,10 @@ export function Hero() {
             videoRef.current.muted = false;
             setIsMuted(false);
             videoRef.current.currentTime = 0;
+            // Ensure we capture duration when starting the showreel
+            if (videoRef.current.duration && !isNaN(videoRef.current.duration)) {
+                setDuration(videoRef.current.duration);
+            }
             videoRef.current.play();
         } else if (!showreelMode && videoRef.current) {
             videoRef.current.muted = true;
@@ -110,20 +121,24 @@ export function Hero() {
     };
 
     const handleLoadedMetadata = () => {
-        if (videoRef.current) {
+        if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration)) {
             setDuration(videoRef.current.duration);
         }
     };
 
     const handleSliderChange = (value: number | readonly number[]) => {
         if (!videoRef.current) return;
+        isDraggingRef.current = true;
         setIsDragging(true);
         const newValue = Array.isArray(value) ? value[0] : value;
-        videoRef.current.currentTime = newValue;
-        setProgress(newValue);
+        if (!isNaN(newValue) && duration > 0) {
+            videoRef.current.currentTime = newValue;
+            setProgress(newValue);
+        }
     };
 
     const handleSliderCommitted = (value: number | readonly number[]) => {
+        isDraggingRef.current = false;
         setIsDragging(false);
     };
 
@@ -134,7 +149,7 @@ export function Hero() {
     };
 
     return (
-        <section className="relative h-screen min-h-[700px] w-full flex items-center justify-center overflow-hidden bg-black">
+        <section className="relative h-dvh min-h-[700px] w-full flex items-center justify-center overflow-hidden bg-black">
             {/* Background Video */}
             <div className="absolute inset-0 z-0">
                 <video
@@ -194,10 +209,9 @@ export function Hero() {
                 </div>
             </div>
 
-            {/* Showreel Mode Controls */}
             <div
                 className={cn(
-                    "absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-full max-w-3xl px-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                    "absolute bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-full max-w-3xl px-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]",
                     showreelMode ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-50 translate-y-20 pointer-events-none"
                 )}
             >
@@ -218,7 +232,7 @@ export function Hero() {
                     <div className="grow h-8 flex flex-col justify-center px-6 rounded-none border border-white/10 backdrop-blur-xs bg-white/5">
                         <Slider
                             value={[progress]}
-                            max={duration}
+                            max={duration > 0 ? duration : 100}
                             step={0.1}
                             onValueChange={handleSliderChange}
                             onValueCommitted={handleSliderCommitted}

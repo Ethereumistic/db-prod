@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 import { CornerBorders } from "@/components/ui/corner-borders";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "../ui/button";
 
 const footerLinks = [
     { title: "За нас", href: "/about" },
@@ -71,6 +72,7 @@ export function Footer() {
                                     >
                                         <CornerBorders />
                                         <span className="relative z-10">{link.title}</span>
+
                                     </Link>
                                 ))}
                             </nav>
@@ -111,7 +113,6 @@ export function Footer() {
                                                 href="tel:+359877611162"
                                                 className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors group text-sm whitespace-nowrap"
                                             >
-                                                {/* <Phone className="w-3 h-3 text-foreground/30 group-hover:text-foreground transition-colors" /> */}
                                                 +359 877 611 162
                                             </a>
                                         </div>

@@ -8,7 +8,16 @@ export const servicesQuery = groq`*[_type == "service"] | order(_createdAt asc) 
     icon,
     route,
     image {
-        asset,
+        asset-> {
+            _id,
+            metadata {
+                palette {
+                    dominant {
+                        background
+                    }
+                }
+            }
+        },
         externalUrl
     }
 }`;
@@ -34,7 +43,16 @@ export const categoriesQuery = groq`*[_type == "projectCategory"] | order(title 
     "serviceId": service._ref,
     description,
     media {
-        asset,
+        asset-> {
+            _id,
+            metadata {
+                palette {
+                    dominant {
+                        background
+                    }
+                }
+            }
+        },
         externalUrl
     }
 }`;
