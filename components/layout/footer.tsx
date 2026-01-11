@@ -10,10 +10,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
 
 const footerLinks = [
-    { title: "За нас", href: "/about" },
+    { title: "За нас", href: "/#about" },
     { title: "Услуги", href: "/#services" },
-    { title: "Портфолио", href: "/portfolio" },
-    { title: "Контакт", href: "/contact" },
+    { title: "Портфолио", href: "/#work" },
+    { title: "Контакт", href: "/#contact" },
 ];
 
 const socials = [
