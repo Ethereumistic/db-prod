@@ -37,7 +37,7 @@ export function ServicesCDN({ services }: ServicesProps) {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl md:text-6xl font-black tracking-wider text-white uppercase "
+                        className="text-4xl md:text-6xl font-black tracking-widest text-white uppercase "
                     >
                         НАШИТЕ <span className=" text-transparent bg-clip-text  bg-linear-to-r from-white via-white/50 to-white/20">УСЛУГИ</span>
                     </motion.h2>
@@ -103,7 +103,7 @@ export function ServicesCDN({ services }: ServicesProps) {
                                             {index + 1}.
                                         </span>
                                         <div className="space-y-2">
-                                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter leading-tight transition-all duration-500">
+                                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-widest leading-tight transition-all duration-500">
                                                 {service.title}
                                             </h3>
                                             <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-md font-medium transition-colors duration-500 group-hover:text-white/80">
