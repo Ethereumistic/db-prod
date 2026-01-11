@@ -79,7 +79,7 @@ function ContactBoard() {
 
         const form = e.currentTarget;
         const formData = new FormData(form);
-        formData.append("access_key", "19d56402-773c-4e1b-893c-78840ceb7ade");
+        formData.append("access_key", process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "");
         formData.append("subject", `Ново запитване от ${nameValue} - db Productions`);
 
         setAnimationPhase("pattern");
@@ -414,7 +414,7 @@ function ContactMovie() {
 
         const form = e.currentTarget;
         const formData = new FormData(form);
-        formData.append("access_key", "19d56402-773c-4e1b-893c-78840ceb7ade");
+        formData.append("access_key", process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "");
         formData.append("subject", `Ново запитване от ${nameValue} - db Productions`);
 
         setAnimationPhase("blurring");
