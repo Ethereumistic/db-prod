@@ -112,11 +112,7 @@ export function ServicesCDN({ services }: ServicesProps) {
                                         </div>
                                     </div>
 
-                                    {/* Link Indicator */}
-                                    <div className="flex items-center gap-2 text-white/20 group-hover:text-white transition-colors duration-500 overflow-hidden pl-12 md:pl-14">
-                                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">Виж проекти</span>
-                                        <div className="w-8 h-px bg-white/10 group-hover:w-16 group-hover:bg-white transition-all duration-700" />
-                                    </div>
+
                                 </div>
                             </motion.div>
                         );

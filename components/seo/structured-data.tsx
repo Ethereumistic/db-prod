@@ -49,7 +49,7 @@ export function LocalBusinessSchema() {
         '@type': 'LocalBusiness',
         '@id': 'https://dbproductions.net/#localbusiness',
         name: 'db Productions',
-        image: 'https://dbproductions.net/android-chrome-512x512.png',
+        image: 'https://dbproductions.net/og-image.jpg',
         description: 'Видео продукция и дигитална агенция в София, България. Професионално заснемане на реклами, корпоративни видеа, YouTube серии и съдържание за социални мрежи.',
         address: {
             '@type': 'PostalAddress',
@@ -117,7 +117,7 @@ export function VideoObjectSchema({
         '@type': 'VideoObject',
         name: name,
         description: description || `${name} - видео продукция от db Productions`,
-        thumbnailUrl: thumbnailUrl || 'https://dbproductions.net/android-chrome-512x512.png',
+        thumbnailUrl: thumbnailUrl || 'https://dbproductions.net/og-image.jpg',
         uploadDate: uploadDate || new Date().toISOString(),
         embedUrl: embedUrl,
         duration: duration,

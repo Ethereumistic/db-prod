@@ -58,10 +58,10 @@ export const metadata: Metadata = {
     description: "Професионална видео продукция в София, България. Реклами, YouTube серии, корпоративни видеа и съдържание за социални мрежи.",
     images: [
       {
-        url: "/android-chrome-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "db Productions Logo",
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "db Productions | Професионална Видео Продукция",
       },
     ],
   },
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "db Productions | Видео Продукция България",
     description: "Професионална видео продукция в София. Реклами, YouTube серии, корпоративни видеа.",
-    images: ["/android-chrome-512x512.png"],
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,

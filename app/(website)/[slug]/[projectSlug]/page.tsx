@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         `${project.title} - видео продукция от db Productions. Професионално заснемане и монтаж в България.`;
 
     // Get OG image
-    let ogImage = "/android-chrome-512x512.png";
+    let ogImage = "/og-image.jpg";
     if (project.heroThumbnail?.image?.asset) {
         ogImage = urlFor(project.heroThumbnail.image.asset).width(1200).height(630).url();
     } else if (project.mainImage?.asset) {
@@ -106,7 +106,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     // Get thumbnail URL for VideoObject schema
     const thumbnailUrl = heroThumbnail?.image?.asset
         ? urlFor(heroThumbnail.image.asset).width(1200).height(630).url()
-        : heroThumbnail?.image?.externalUrl || `${BASE_URL}/android-chrome-512x512.png`;
+        : heroThumbnail?.image?.externalUrl || `${BASE_URL}/og-image.jpg`;
 
     // Get first video URL for schema
     const firstVideoUrl = heroThumbnail?.videoUrl || videos?.[0]?.urls?.[0];

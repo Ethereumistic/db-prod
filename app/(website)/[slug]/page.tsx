@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const description = category.description || `Разгледайте нашите ${category.title.toLowerCase()} проекти. Професионална видео продукция от db Productions в България.`;
 
     // Get OG image from category media
-    let ogImage = "/android-chrome-512x512.png";
+    let ogImage = "/og-image.jpg";
     if (category.media?.asset) {
         ogImage = urlFor(category.media.asset).width(1200).height(630).url();
     } else if (category.media?.externalUrl) {
