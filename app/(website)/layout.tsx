@@ -11,7 +11,7 @@ export default function WebsiteLayout({
         <>
             <Navbar />
             <main className="min-h-screen">
-                <BreakpointDisplay />
+                {/* <BreakpointDisplay /> */}
                 {children}
             </main>
             <Footer />
