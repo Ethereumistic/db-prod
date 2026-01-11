@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Play, Pause, Volume2, VolumeX, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play, Pause, Volume2, VolumeX, RotateCcw, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 
@@ -54,6 +54,18 @@ export function Hero() {
             video.removeEventListener("pause", handlePause);
         };
     }, [isDragging]);
+
+    // Listen for manual exit from Navbar
+    useEffect(() => {
+        const handleExit = () => setShowreelMode(false);
+        window.addEventListener("exitShowreel", handleExit);
+        return () => window.removeEventListener("exitShowreel", handleExit);
+    }, []);
+
+    // Dispatch event for Navbar
+    useEffect(() => {
+        window.dispatchEvent(new CustomEvent("showreelModeChanged", { detail: showreelMode }));
+    }, [showreelMode]);
 
     // Auto-exit showreel mode on scroll or video end
     useEffect(() => {
@@ -285,7 +297,7 @@ export function Hero() {
                             onClick={() => setShowreelMode(false)}
                             className="size-8 rounded-none border-white/10 backdrop-blur-xl bg-black/40 text-white hover:bg-white/10 transition-colors group"
                         >
-                            <ArrowLeft className="size-3 group-hover:-translate-x-0.5 transition-transform" />
+                            <Minimize2 className="size-3 group-hover:scale-110 transition-transform" />
                         </Button>
                     </div>
                 </div>

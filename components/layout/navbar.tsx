@@ -36,6 +36,7 @@ const navItems = [
 
 export function Navbar() {
     const [scrolled, setScrolled] = React.useState(false);
+    const [isShowreelMode, setIsShowreelMode] = React.useState(false);
     const [currentHash, setCurrentHash] = React.useState("");
     const [isOpen, setIsOpen] = React.useState(false);
     const pathname = usePathname();
@@ -48,10 +49,14 @@ export function Navbar() {
         const handleHashChange = () => {
             setCurrentHash(window.location.hash);
         };
+        const handleShowreelChange = (e: any) => {
+            setIsShowreelMode(e.detail);
+        };
 
         window.addEventListener("scroll", handleScroll);
         window.addEventListener("popstate", handleHashChange);
         window.addEventListener("hashchange", handleHashChange);
+        window.addEventListener("showreelModeChanged", handleShowreelChange);
 
         // Initial hash
         setCurrentHash(window.location.hash);
@@ -60,40 +65,62 @@ export function Navbar() {
             window.removeEventListener("scroll", handleScroll);
             window.removeEventListener("popstate", handleHashChange);
             window.removeEventListener("hashchange", handleHashChange);
+            window.removeEventListener("showreelModeChanged", handleShowreelChange);
         };
     }, []);
 
     const { handleAnchorClick } = useScrollAnchor();
 
+    const handleExitShowreel = (e: React.MouseEvent) => {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("exitShowreel"));
+    };
+
     return (
         <header className={cn(
-            "fixed top-0 left-0 right-0 transition-all duration-500 ease-in-out z-100 pointer-events-none",
-            scrolled ? "py-2" : "py-6"
+            "fixed top-0 left-0 right-0 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] z-100 pointer-events-none",
+            scrolled ? "py-2" : "py-6",
+            isShowreelMode && "py-4 md:py-6"
         )}>
             <div className="container mx-auto px-4 pointer-events-auto">
                 <nav className={cn(
-                    "flex items-center justify-between border border-white/10 transition-all duration-500 ease-in-out px-6 py-2 backdrop-blur-xl shadow-2xl",
-                    scrolled ? "bg-black/20 scale-[0.98]" : "bg-black/20"
+                    "flex items-center justify-between border border-white/10 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] px-6 py-2 backdrop-blur-xl shadow-2xl overflow-hidden",
+                    scrolled ? "bg-black/20 scale-[0.98]" : "bg-black/20",
+                    isShowreelMode ? "w-14 h-14 p-0.5 rounded-none border-white/20 active:scale-100 cursor-pointer" : "w-full rounded-none"
                 )}>
                     {/* Logo Section */}
                     <Link
                         href="/"
                         onClick={(e) => {
+                            if (isShowreelMode) {
+                                handleExitShowreel(e);
+                                return;
+                            }
                             handleAnchorClick(e, "/");
                             setCurrentHash("");
                         }}
-                        className="flex items-center hover:opacity-80 transition-opacity"
+                        className={cn(
+                            "relative flex items-center justify-center transition-all duration-500",
+                            isShowreelMode ? "w-full h-full" : "hover:opacity-80"
+                        )}
                     >
                         <Logo
-                            size="sm"
-                            variant="logo"
+                            size={isShowreelMode ? "sm" : "sm"}
+                            variant={isShowreelMode ? "logomark" : "logo"}
                             layout="horizontal_right"
-                            textClassName=" lg:inline-block sm:inline-block md:hidden"
+                            className="transition-all duration-500"
+                            textClassName={cn(
+                                "lg:inline-block sm:inline-block md:hidden transition-all duration-500",
+                                isShowreelMode && "opacity-0 invisible w-0"
+                            )}
                         />
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className={cn(
+                        "hidden md:flex items-center gap-4 transition-all duration-500",
+                        isShowreelMode && "opacity-0 invisible pointer-events-none w-0 scale-90 translate-x-10"
+                    )}>
                         <NavigationMenu>
                             <NavigationMenuList className="gap-2 lg:gap-8">
                                 {navItems.map((item) => {
@@ -142,7 +169,10 @@ export function Navbar() {
                     </div>
 
                     {/* Mobile Navigation */}
-                    <div className="md:hidden ">
+                    <div className={cn(
+                        "md:hidden transition-all duration-500",
+                        isShowreelMode && "opacity-0 invisible pointer-events-none w-0 scale-90 translate-x-10"
+                    )}>
                         <Sheet open={isOpen} onOpenChange={setIsOpen}>
                             <SheetTrigger
                                 render={
