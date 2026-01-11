@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { client } from '@/lib/sanity/client'
 
-const BASE_URL = 'https://dbproductions.net'
+import { BASE_URL } from '@/lib/env'
 
 async function getCategories() {
     return client.fetch(`*[_type == "projectCategory"]{ slug { current } }`)

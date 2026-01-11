@@ -1,11 +1,13 @@
 // SEO Structured Data Components for db Productions
 // JSON-LD Schema.org markup for enhanced Google search results
 
+import { BASE_URL } from "@/lib/env"
+
 interface OrganizationSchemaProps {
     url?: string
 }
 
-export function OrganizationSchema({ url = 'https://dbproductions.net' }: OrganizationSchemaProps) {
+export function OrganizationSchema({ url = BASE_URL }: OrganizationSchemaProps) {
     const schema = {
         '@context': 'https://schema.org',
         '@type': 'Organization',
@@ -47,9 +49,9 @@ export function LocalBusinessSchema() {
     const schema = {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
-        '@id': 'https://dbproductions.net/#localbusiness',
+        '@id': `${BASE_URL}/#localbusiness`,
         name: 'db Productions',
-        image: 'https://dbproductions.net/og-image.jpg',
+        image: `${BASE_URL}/og-image.jpg`,
         description: 'Видео продукция и дигитална агенция в София, България. Професионално заснемане на реклами, корпоративни видеа, YouTube серии и съдържание за социални мрежи.',
         address: {
             '@type': 'PostalAddress',
@@ -63,7 +65,7 @@ export function LocalBusinessSchema() {
             latitude: 42.6977,
             longitude: 23.3219,
         },
-        url: 'https://dbproductions.net',
+        url: BASE_URL,
         email: 'video@dbproductions.net',
         priceRange: '$$',
         openingHoursSpecification: {
@@ -117,7 +119,7 @@ export function VideoObjectSchema({
         '@type': 'VideoObject',
         name: name,
         description: description || `${name} - видео продукция от db Productions`,
-        thumbnailUrl: thumbnailUrl || 'https://dbproductions.net/og-image.jpg',
+        thumbnailUrl: thumbnailUrl || `${BASE_URL}/og-image.jpg`,
         uploadDate: uploadDate || new Date().toISOString(),
         embedUrl: embedUrl,
         duration: duration,
@@ -126,7 +128,7 @@ export function VideoObjectSchema({
             name: 'db Productions',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://dbproductions.net/android-chrome-512x512.png',
+                url: `${BASE_URL}/android-chrome-512x512.png`,
             },
         },
     }
@@ -174,7 +176,7 @@ export function WebsiteSchema() {
         '@type': 'WebSite',
         name: 'db Productions',
         alternateName: 'db Productions Bulgaria',
-        url: 'https://dbproductions.net',
+        url: BASE_URL,
         description: 'Професионална видео продукция и дигитална агенция в България',
         inLanguage: 'bg-BG',
         publisher: {
@@ -182,7 +184,7 @@ export function WebsiteSchema() {
             name: 'db Productions',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://dbproductions.net/android-chrome-512x512.png',
+                url: `${BASE_URL}/android-chrome-512x512.png`,
             },
         },
     }
@@ -204,7 +206,7 @@ export function ServiceSchema() {
         provider: {
             '@type': 'Organization',
             name: 'db Productions',
-            url: 'https://dbproductions.net',
+            url: BASE_URL,
         },
         areaServed: {
             '@type': 'Country',

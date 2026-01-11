@@ -14,7 +14,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
 import { VideoObjectSchema, BreadcrumbSchema } from "@/components/seo/structured-data";
 
-const BASE_URL = 'https://dbproductions.net';
+import { BASE_URL } from "@/lib/env";
 
 // Fetch project metadata
 async function getProjectMeta(slug: string) {

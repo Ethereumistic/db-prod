@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const BASE_URL = 'https://dbproductions.net';
+import { BASE_URL } from "@/lib/env";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

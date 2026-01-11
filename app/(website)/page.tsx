@@ -1,5 +1,5 @@
 import { client } from "@/lib/sanity/client";
-import { servicesQuery, categoriesQuery, projectsQuery } from "@/lib/sanity/queries";
+import { servicesQuery, categoriesQuery, partnersQuery } from "@/lib/sanity/queries";
 import { ServicesCDN } from "@/components/sections/services-cdn";
 import { Hero } from "@/components/sections/hero";
 import { Partners } from "@/components/sections/partners";
@@ -8,6 +8,7 @@ import { Contact } from "@/components/sections/contact";
 import { Portfolio2 } from "@/components/sections/portfolio2";
 import { ContactTest } from "@/components/sections/contact-test";
 import type { Metadata } from "next";
+import { BASE_URL } from "@/lib/env";
 
 // Homepage-specific metadata optimized for Bulgarian SEO
 export const metadata: Metadata = {
@@ -27,14 +28,15 @@ export const metadata: Metadata = {
         "db Productions",
     ],
     alternates: {
-        canonical: "https://dbproductions.net",
+        canonical: BASE_URL,
     },
 };
 
 export default async function Home() {
-    const [services, categories] = await Promise.all([
+    const [services, categories, partnersData] = await Promise.all([
         client.fetch(servicesQuery, {}, { next: { revalidate: 3600 } }),
         client.fetch(categoriesQuery, {}, { next: { revalidate: 3600 } }),
+        client.fetch(partnersQuery, {}, { next: { revalidate: 3600 } }),
     ]);
 
     return (
@@ -42,7 +44,7 @@ export default async function Home() {
             <Hero />
             <ServicesCDN services={services} />
             <Portfolio2 categories={categories} />
-            <Partners />
+            <Partners data={partnersData} />
             <About />
             <Contact />
             {/* <ContactTest /> */}

@@ -16,7 +16,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
 import { BreadcrumbSchema } from "@/components/seo/structured-data";
 
-const BASE_URL = 'https://dbproductions.net';
+import { BASE_URL } from "@/lib/env";
 
 // Fetch category for metadata
 async function getCategoryMeta(slug: string) {

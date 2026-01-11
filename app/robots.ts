@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = 'https://dbproductions.net'
+import { BASE_URL } from '@/lib/env'
 
 export default function robots(): MetadataRoute.Robots {
     return {

@@ -13,6 +13,20 @@ export const servicesQuery = groq`*[_type == "service"] | order(_createdAt asc) 
     }
 }`;
 
+export const partnersQuery = groq`*[_type == "partners"][0] {
+    title,
+    logos[] {
+        name,
+        logo {
+            asset,
+            externalUrl
+        },
+        alt,
+        logoType,
+        zoomLevel
+    }
+}`;
+
 export const categoriesQuery = groq`*[_type == "projectCategory"] | order(title asc) {
     _id,
     title,

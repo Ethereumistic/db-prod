@@ -1,7 +1,7 @@
 import { LegalLayout } from "@/components/sections/legal-layout";
 import type { Metadata } from "next";
 
-const BASE_URL = 'https://dbproductions.net';
+import { BASE_URL } from "@/lib/env";
 
 export const metadata: Metadata = {
     title: "Политика за поверителност",
