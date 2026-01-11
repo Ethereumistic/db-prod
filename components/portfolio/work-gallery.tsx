@@ -159,7 +159,7 @@ export function WorkGallery({ images, title }: WorkGalleryProps) {
             <Dialog open={selectedImageIndex !== null} onOpenChange={(open) => !open && setSelectedImageIndex(null)}>
                 <DialogContent
                     showCloseButton={false}
-                    className="max-w-none sm:max-w-none w-full h-screen bg-black/95 border-none p-0 overflow-hidden outline-none flex items-center justify-center z-[200]"
+                    className="max-w-none sm:max-w-none w-full h-screen bg-black/95 border-none p-0 overflow-hidden outline-none flex items-center justify-center z-200"
                 >
                     <div className="relative w-full h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-6">
                         {/* Upper Status Bar */}
