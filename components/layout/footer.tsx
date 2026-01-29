@@ -39,7 +39,7 @@ export function Footer() {
                             <Logo size="xl" variant="logo" layout="vertical" />
                         </Link>
                         <p className="text-foreground/60 max-w-sm text-center lg:text-left text-sm font-light leading-relaxed">
-                            Бутиково творческо студио, специализирано във фотографията, киното и дигиталното разказване на истории. Постигаме съвършенство от 2018 г.
+                            Ние сме db Productions – двама приятели, обединени от страстта към документалното кино и видеозаснемането.
                         </p>
                         <div className="flex items-center gap-4">
                             {socials.map((social) => (
