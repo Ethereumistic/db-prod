@@ -1,5 +1,5 @@
 import { client } from "@/lib/sanity/client";
-import { servicesQuery, categoriesQuery, partnersQuery } from "@/lib/sanity/queries";
+import { servicesQuery, categoriesQuery, partnersQuery, portfolioOrderQuery } from "@/lib/sanity/queries";
 import { ServicesCDN } from "@/components/sections/services-cdn";
 import { Hero } from "@/components/sections/hero";
 import { Partners } from "@/components/sections/partners";
@@ -33,17 +33,30 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-    const [services, categories, partnersData] = await Promise.all([
+    const [services, categories, partnersData, orderIds] = await Promise.all([
         client.fetch(servicesQuery, {}, { next: { revalidate: 3600 } }),
         client.fetch(categoriesQuery, {}, { next: { revalidate: 3600 } }),
         client.fetch(partnersQuery, {}, { next: { revalidate: 3600 } }),
+        client.fetch(portfolioOrderQuery, {}, { next: { revalidate: 3600 } }),
     ]);
+
+    // Apply the explicit ordering from the Portfolio Settings singleton.
+    // Categories not present in the list fall back to alphabetical order at the end.
+    const orderedIds: string[] = orderIds ?? [];
+    const orderedCategories = [...categories].sort((a, b) => {
+        const ia = orderedIds.indexOf(a._id);
+        const ib = orderedIds.indexOf(b._id);
+        if (ia === -1 && ib === -1) return a.title.localeCompare(b.title);
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+    });
 
     return (
         <>
             <Hero />
             <ServicesCDN services={services} />
-            <Portfolio2 categories={categories} />
+            <Portfolio2 categories={orderedCategories} />
             <Partners data={partnersData} />
             <About />
             <Contact />

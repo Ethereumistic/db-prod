@@ -72,6 +72,13 @@ export const projectCategory = defineType({
             type: 'text',
             rows: 3,
         }),
+        defineField({
+            name: 'subtitle',
+            title: 'Subtitle (optional)',
+            type: 'text',
+            rows: 2,
+            description: 'Optional subtitle shown on the category page header (e.g. /podcasts). Leave empty to hide. Does not affect the homepage grid.',
+        }),
         defineField(flexibleMediaField), // Using the reusable structure
     ],
     preview: {

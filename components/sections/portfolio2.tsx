@@ -34,7 +34,7 @@ interface Portfolio2Props {
     categories: ProjectCategory[];
 }
 
-function CategoryCard({ category, index }: { category: ProjectCategory; index: number }) {
+function CategoryCard({ category, index, spanTwo }: { category: ProjectCategory; index: number; spanTwo?: boolean }) {
     const cardRef = useRef(null);
     const isInView = useInView(cardRef, {
         once: false,
@@ -66,11 +66,12 @@ function CategoryCard({ category, index }: { category: ProjectCategory; index: n
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.1, duration: 0.5 }}
             viewport={{ once: true }}
-            className="group/portfolio"
+            className={cn("group/portfolio", spanTwo && "sm:col-span-2")}
         >
             <Link href={`/${category.slug.current}`}>
                 <Card className={cn(
-                    "relative aspect-video overflow-hidden border-white/5 bg-zinc-900 transition-all duration-700 rounded-none cursor-pointer",
+                    "relative overflow-hidden border-white/5 bg-zinc-900 transition-all duration-700 rounded-none cursor-pointer",
+                    spanTwo ? "aspect-video sm:aspect-[2.4/1]" : "aspect-video",
                     "group-hover/portfolio:border-white/10 group-hover/portfolio:bg-white/2",
                     isActiveOnMobile && "border-white/10 bg-white/2"
                 )}>
@@ -170,7 +171,12 @@ export function Portfolio2({ categories }: Portfolio2Props) {
                 {/* Categories Grid - 2 Columns */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4">
                     {categories.map((category, index) => (
-                        <CategoryCard key={category._id} category={category} index={index} />
+                        <CategoryCard
+                            key={category._id}
+                            category={category}
+                            index={index}
+                            spanTwo={categories.length % 2 !== 0 && index === 0}
+                        />
                     ))}
                 </div>
             </div>

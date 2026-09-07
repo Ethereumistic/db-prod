@@ -43,5 +43,6 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "packageManager": "pnpm@12.3.4"
 }

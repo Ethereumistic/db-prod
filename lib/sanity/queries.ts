@@ -57,6 +57,10 @@ export const categoriesQuery = groq`*[_type == "projectCategory"] | order(title 
     }
 }`;
 
+// Fetches the explicit category ordering from the portfolioSettings singleton.
+// Returns an array of category _ids in the desired display order.
+export const portfolioOrderQuery = groq`*[_type == "portfolioSettings"][0].categoryOrder[]._ref`;
+
 export const projectsQuery = groq`*[_type == "project"] | order(_createdAt desc) {
     _id,
     title,

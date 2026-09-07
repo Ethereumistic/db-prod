@@ -24,6 +24,7 @@ async function getCategoryMeta(slug: string) {
         `*[_type == "projectCategory" && slug.current == $slug][0]{
             title,
             description,
+            subtitle,
             media { asset, externalUrl }
         }`,
         { slug }
@@ -102,7 +103,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         notFound();
     }
 
-    const { categoryType, projects, title } = category;
+    const { categoryType, projects, title, subtitle } = category;
 
     return (
         <main className="bg-black min-h-screen py-28 text-white">
@@ -116,6 +117,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                             {title}
                         </h1>
                         <div className="w-24 h-1 bg-white/20" />
+                        {subtitle && (
+                            <p className="text-base md:text-xl font-light text-white/60 max-w-2xl">
+                                {subtitle}
+                            </p>
+                        )}
                     </div>
                 </div>
 
